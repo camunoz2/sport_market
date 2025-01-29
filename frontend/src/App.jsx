@@ -15,7 +15,7 @@ function App() {
       </div>
       <CategoryList />
       <div className="container mx-auto">
-        <h2 className="font-bold text-4xl py-8">Productos</h2>
+        <h2 className="font-bold text-4xl py-8">Producto</h2>
       </div>
       <div className="grid grid-cols-3 gap-2 container mx-auto">
         <ProductCard />
