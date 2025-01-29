@@ -1,0 +1,28 @@
+name: WhatsApp Notification on Commit
+on: [push]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract commit details
+        id: commit
+        run: |
+          echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
+          echo "COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
+
+      - name: Send WhatsApp message
+        run: |
+          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
+          --data-urlencode "To=whatsapp:$USER_PHONE_NUMBER" \
+          --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
+          --data-urlencode "Body=New commit by ${{ env.COMMIT_AUTHOR }}: ${{ env.COMMIT_MESSAGE }}" \
+          -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+        env:
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
+          USER_PHONE_NUMBER: ${{ secrets.USER_PHONE_NUMBER }}
