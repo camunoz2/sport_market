@@ -4,7 +4,7 @@ const CategoryNav = () => {
       <div className="container mx-auto flex items-center justify-between py-4">
         <div className="flex space-x-6">
           <span className="text-gray-700 hover:text-blue-600 cursor-pointer">
-            Categoria 1
+           Zapatilla
           </span>
           <span className="text-gray-700 hover:text-blue-600 cursor-pointer">
             Categoria 2
