@@ -9,19 +9,31 @@ function App() {
     <>
       <Header />
       <CategoryNav />
-      <img src="/featured.png" alt="imagen destacada" className="w-full" />
-      <div className="container mx-auto">
-        <h2 className="font-bold text-4xl py-8">Categorias</h2>
+      {/* Imagen destacada responsiva */}
+      <img 
+        src="/featured.png" 
+        alt="imagen destacada" 
+        className="w-full max-w-full h-auto"
+      />
+      
+      {/* Categorías */}
+      <div className="container mx-auto px-4">
+        <h2 className="font-bold text-2xl md:text-4xl py-4">Categorías</h2>
+        <CategoryList />
       </div>
-      <CategoryList />
-      <div className="container mx-auto">
-        <h2 className="font-bold text-4xl py-8">Producto</h2>
+
+      {/* Productos */}
+      <div className="container mx-auto px-4">
+        <h2 className="font-bold text-2xl md:text-4xl py-4">Productos</h2>
+        
+        {/* Grid Responsivo */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <ProductCard />
+          <ProductCard />
+          <ProductCard />
+        </div>
       </div>
-      <div className="grid grid-cols-3 gap-2 container mx-auto">
-        <ProductCard />
-        <ProductCard />
-        <ProductCard />
-      </div>
+
       <Footer />
     </>
   );
