@@ -1,5 +1,6 @@
 import CategoryList from "./components/category-list";
 import CategoryNav from "./components/category-nav";
+import Footer from "./components/footer";
 import Header from "./components/header";
 import ProductCard from "./components/product-card";
 
@@ -21,6 +22,7 @@ function App() {
         <ProductCard />
         <ProductCard />
       </div>
+      <Footer />
     </>
   );
 }
