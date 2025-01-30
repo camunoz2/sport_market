@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const ProductCard = ({ title, price, image }) => {
+const ProductCard = ({ title, price, image, id }) => {
   return (
     <div className="border-1 border-black rounded-sm flex flex-col">
       <div className="w-full rounded-t-sm overflow-hidden flex-shrink-0">
@@ -21,9 +21,12 @@ const ProductCard = ({ title, price, image }) => {
           <button className="border-1 border-black bg-blue-400 rounded-sm px-4 py-2 w-full">
             Agregar al carro
           </button>
-          <button className="border-1 border-black rounded-sm bg-gray-300 px-4 py-2 w-full">
+          <a
+            href={`productos/${id}`}
+            className="border-1 border-black rounded-sm bg-gray-300 px-4 py-2 w-full"
+          >
             Ver Producto
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -33,6 +36,7 @@ const ProductCard = ({ title, price, image }) => {
 export default ProductCard;
 
 ProductCard.propTypes = {
+  id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   price: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,

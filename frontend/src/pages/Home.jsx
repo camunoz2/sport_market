@@ -36,6 +36,7 @@ function App() {
           {products.map((product) => (
             <ProductCard
               key={product.id}
+              link={product.id}
               title={product.name}
               price={product.price}
               image={product.image}
