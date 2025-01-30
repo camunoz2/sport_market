@@ -4,20 +4,16 @@ import Footer from "../components/footer";
 import Header from "../components/header";
 import ProductCard from "../components/product-card";
 
-import { useState, useEffect } from "react";
-import { generateProducts } from "../utils/fakerjs";
+import { generateProducts, getUniqueCategories } from "../utils/fakerjs";
 
 function App() {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    setProducts(generateProducts(12));
-  }, []);
+  const products = generateProducts(7);
+  const categories = getUniqueCategories(products);
 
   return (
     <>
       <Header />
-      <CategoryNav />
+      <CategoryNav categories={categories} />
       {/* Imagen destacada responsiva */}
       <img
         src="/featured.png"

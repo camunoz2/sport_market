@@ -17,3 +17,8 @@ export const generateProduct = () => ({
 });
 
 export const generateProducts = (count) => Array.from({ length: count }, generateProduct);
+
+export const getUniqueCategories = (products) => {
+  const categories = products.map(product => product.category);
+  return [...new Set(categories)]; // Remove duplicates
+};
