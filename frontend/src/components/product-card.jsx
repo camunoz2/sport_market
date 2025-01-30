@@ -1,18 +1,20 @@
-const ProductCard = () => {
+import PropTypes from "prop-types";
+
+const ProductCard = ({ title, price, image }) => {
   return (
     <div className="border-1 border-black rounded-sm flex flex-col">
       <div className="w-full rounded-t-sm overflow-hidden flex-shrink-0">
         <img
-          src="/nike.jpg"
+          src={image}
           className="w-full h-48 object-cover"
           alt="imagen producto"
         />
       </div>
 
       <div className="p-4 flex flex-col flex-1">
-        <h2 className="font-bold text-xl mb-2">Producto 1</h2>
+        <h2 className="font-bold text-xl mb-2">{title}</h2>
         <h3 className="text-2xl font-bold mb-4">
-          $54.000 <span className="text-sm font-light">clp</span>
+          {price} <span className="text-sm font-light">clp</span>
         </h3>
 
         <div className="mt-auto flex gap-2">
@@ -29,3 +31,9 @@ const ProductCard = () => {
 };
 
 export default ProductCard;
+
+ProductCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  price: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
+};
