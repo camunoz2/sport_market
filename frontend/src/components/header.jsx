@@ -23,7 +23,7 @@ const Header = () => {
     return () => {
       window.removeEventListener("storage", loadUser);
     };
-  }, []);
+  }, [setUser]);
 
   const handleLogout = () => {
     sessionStorage.removeItem("jwt");
