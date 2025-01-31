@@ -39,11 +39,11 @@ function Login() {
           />
           <div className="flex justify-between w-full">
             <div className="flex gap-2">
-              <p>Recordar</p>
+              <p>test@test.com</p>
               <input type="checkbox" />
             </div>
             <div>
-              <p>Olvide la contraseña</p>
+              <p>la pass es 1234</p>
             </div>
           </div>
           <button
