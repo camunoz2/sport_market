@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker';
+import { fakerES_MX as faker } from '@faker-js/faker';
 
 const CATEGORIES = ['Running Shoes', 'Basketball Shoes', 'Training Shoes', 'Sports T-Shirts', 'Shorts', 'Hoodies'];
 const BRANDS = ['Nike', 'Adidas', 'Under Armour', 'Puma', 'New Balance'];
@@ -9,7 +9,7 @@ export const generateProduct = () => ({
   brand: faker.helpers.arrayElement(BRANDS),
   category: faker.helpers.arrayElement(CATEGORIES),
   description: faker.commerce.productDescription(),
-  price: faker.commerce.price({ min: 30, max: 200 }),
+  price: faker.commerce.price({ min: 40000, max: 245000, dec: 0 }),
   image: faker.image.urlLoremFlickr({ category: 'sports' }),
   sizes: ['S', 'M', 'L', 'XL'],
   colors: Array.from({ length: faker.number.int({ min: 1, max: 4 }) }, () => faker.color.human()),
