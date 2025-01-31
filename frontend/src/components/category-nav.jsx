@@ -15,9 +15,12 @@ const CategoryNav = ({ categories }) => {
           ))}
         </div>
 
-        <button className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+        <a
+          href="/publicar"
+          className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
           Publicar Producto
-        </button>
+        </a>
       </div>
     </div>
   );

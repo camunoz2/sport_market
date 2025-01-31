@@ -18,12 +18,12 @@ const ProductCard = ({ title, price, image, id }) => {
         </h3>
 
         <div className="mt-auto flex gap-2">
-          <button className="border-1 border-black bg-blue-400 rounded-sm px-4 py-2 w-full">
+          <button className="border-1 border-black bg-blue-400 rounded-sm px-4 py-2 w-full text-center">
             Agregar al carro
           </button>
           <a
             href={`productos/${id}`}
-            className="border-1 border-black rounded-sm bg-gray-300 px-4 py-2 w-full"
+            className="border-1 border-black rounded-sm bg-gray-300 px-4 py-2 w-full text-center"
           >
             Ver Producto
           </a>
