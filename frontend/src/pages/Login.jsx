@@ -11,9 +11,9 @@ function Login() {
     e.preventDefault();
     try {
       await login(email, password);
-      alert("Login successful!, welcome", user);
+      alert(`Bienvenido ${user}`);
     } catch (err) {
-      alert("Login failed!", err);
+      alert("El login fallo. Estas corriendo el backend??", err);
     }
   };
 
