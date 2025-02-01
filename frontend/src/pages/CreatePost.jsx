@@ -18,7 +18,7 @@ const CreateListing = () => {
 
   const handlePublishClick = () => {
     // Verificar si el usuario está autenticado en el localStorage (puedes usar otro método según tu lógica)
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
+    const isAuthenticated = sessionStorage.getItem("jwt");
 
     if (isAuthenticated) {
       // Si está autenticado, continuar con la publicación

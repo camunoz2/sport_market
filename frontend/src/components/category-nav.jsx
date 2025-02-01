@@ -1,28 +1,62 @@
+import { useState } from "react";
 import PropTypes from "prop-types";
+import { Menu, X } from "lucide-react"; // Importamos iconos para el menú
 
 const CategoryNav = ({ categories }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div className="bg-blue-400">
-      <div className="container mx-auto flex items-center justify-between py-4">
-        <div className="flex space-x-6">
+    <nav className="bg-blue-500 text-white">
+      <div className="container mx-auto flex items-center justify-between py-4 px-6">
+        {/* Menú en pantallas grandes */}
+        <div className="hidden md:flex space-x-6">
           {categories.map((category) => (
             <span
               key={category}
-              className="text-gray-700 hover:text-blue-600 cursor-pointer"
+              className="hover:text-gray-300 cursor-pointer transition-colors"
             >
               {category}
             </span>
           ))}
         </div>
 
+        {/* Botón Publicar */}
         <a
           href="/publicar"
-          className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors hidden md:block"
         >
           Publicar Producto
         </a>
+
+        {/* Botón Hamburguesa para móviles */}
+        <button
+          className="md:hidden focus:outline-none"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X size={30} /> : <Menu size={30} />}
+        </button>
       </div>
-    </div>
+
+      {/* Menú desplegable en móviles */}
+      {isOpen && (
+        <div className="md:hidden bg-blue-600 text-white flex flex-col items-center py-4 space-y-3">
+          {categories.map((category) => (
+            <span
+              key={category}
+              className="hover:text-gray-300 cursor-pointer transition-colors"
+            >
+              {category}
+            </span>
+          ))}
+          <a
+            href="/publicar"
+            className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+          >
+            Publicar Producto
+          </a>
+        </div>
+      )}
+    </nav>
   );
 };
 
