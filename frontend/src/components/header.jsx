@@ -85,17 +85,39 @@ const Header = ({ products }) => {
               Registrarse
             </button>
 
-          
+
+            <div
+              className="relative cursor-pointer hidden md:block"
+              onClick={() => navigate("/registro")}>
+              <img src="/carticon.svg" alt="Carrito" className="h-8" />
+              <span className="absolute bottom-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-red-100 bg-red-600 rounded-full">
+                3
+              </span>
+
+            </div>
+            
 
 
-
-
-
-
-
+           
 
 
         </div>
+
+
+
+        
+
+        {/* Carrito en móviles */}
+        <div className="md:hidden fixed bottom-4 right-4 bg-gray-800 p-3 rounded-full shadow-lg cursor-pointer" onClick={() => navigate("/")}>
+                    <img src="/carticon.svg" alt="Carrito" className="h-8" />
+            </div>
+
+
+
+
+
+
+
       </div>
     </header>
   );
