@@ -88,7 +88,7 @@ const Header = ({ products }) => {
 
             <div
               className="relative cursor-pointer hidden md:block"
-              onClick={() => navigate("/registro")}>
+              onClick={() => navigate("/")}>
               <img src="/carticon.svg" alt="Carrito" className="h-8" />
               <span className="absolute bottom-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-red-100 bg-red-600 rounded-full">
                 3
