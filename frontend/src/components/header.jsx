@@ -43,7 +43,7 @@ const Header = () => {
           {user ? (
             <>
               <div className="flex flex-col mr-4">
-                <span className="text-white">Hola, {user.email}</span>
+                <span className="text-white">Holas, {user.email}</span>
                 <button
                   className="text-white font-bold hover:underline"
                   onClick={handleLogout}
