@@ -76,6 +76,25 @@ const Header = ({ products }) => {
               Iniciar Sesión
             </button>
           )}
+
+           {/* Botón de Registrarse */}
+           <button
+              className="block md:inline text-white font-bold hover:underline mt-2 md:mt-0 px-3"
+              onClick={() => navigate("/registro")}
+            >
+              Registrarse
+            </button>
+
+          
+
+
+
+
+
+
+
+
+
         </div>
       </div>
     </header>
