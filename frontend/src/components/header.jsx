@@ -59,6 +59,7 @@ const Header = () => {
               </div>
             </>
           ) : (
+           
             <button
               className="text-white font-bold hover:underline"
               onClick={() => navigate("/login")}
