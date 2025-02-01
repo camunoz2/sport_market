@@ -5,7 +5,10 @@ import axios from "axios";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const email = sessionStorage.getItem("email");
+    return email ? { email } : null;
+  });
 
   const login = async (email, password) => {
     const response = await axios.post("http://localhost:5000/api/login", {
