@@ -43,6 +43,9 @@ const Header = () => {
           {user ? (
             <>
               <div className="flex flex-col mr-4">
+                <a className="text-white font-bold text-center" href="/profile">
+                  Mi Perfil
+                </a>
                 <span className="text-white">Holas, {user.email}</span>
                 <button
                   className="text-white font-bold hover:underline"
