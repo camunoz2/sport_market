@@ -7,6 +7,7 @@ import BaseLayout from "../layouts/base-layout.jsx";
 import CreatePost from "../pages/CreatePost.jsx";
 import ProductsPage from "../pages/ProductsPage";
 import { NotFound } from "../components/NoFound.jsx";
+import { Profile } from "../pages/Profile.jsx";
 
 const AppRouter = () => {
   return (
@@ -19,6 +20,7 @@ const AppRouter = () => {
           <Route path="/productos" element={<ProductsPage />} />
           <Route path="/productos/:id" element={<ProductDetail />} />
           <Route path="/publicar" element={<CreatePost />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/*" element={<NotFound />} />
         </Route>
       </Routes>
