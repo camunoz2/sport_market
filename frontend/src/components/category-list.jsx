@@ -2,7 +2,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
-import { Link } from "react-router-dom"; // Importamos Link para la navegación
 import Category from "./category";
 
 // Importar imágenes desde assets
@@ -13,7 +12,7 @@ import img3 from "../assets/articulos.jpg";
 const categories = [
   { imageSrc: img1, title: "Ropa" },
   { imageSrc: img2, title: "Zapatos" },
-  { imageSrc: img3, title: "Accesorios" }
+  { imageSrc: img3, title: "Accesorios" },
 ];
 
 const CategoryList = () => {
@@ -24,7 +23,7 @@ const CategoryList = () => {
         spaceBetween={10}
         breakpoints={{
           640: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 }
+          1024: { slidesPerView: 3 },
         }}
         pagination={{ clickable: true }}
         autoplay={{ delay: 3000 }}
@@ -34,9 +33,9 @@ const CategoryList = () => {
         {categories.map((category, index) => (
           <SwiperSlide key={index}>
             {/* Envolver cada imagen en un enlace para redirigir */}
-            <Link to="/productos" className="block">
+            <a href="/productos">
               <Category imageSrc={category.imageSrc} title={category.title} />
-            </Link>
+            </a>
           </SwiperSlide>
         ))}
       </Swiper>

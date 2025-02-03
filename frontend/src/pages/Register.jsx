@@ -1,5 +1,5 @@
 import UserInput from "../components/user-input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 function Register() {
   const navigate = useNavigate();

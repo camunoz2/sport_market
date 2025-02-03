@@ -4,13 +4,13 @@ import { Outlet } from "react-router";
 
 const BaseLayout = () => {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <div className="container mx-auto flex items-center justify-center">
+      <main className="flex-grow container mx-auto flex items-center justify-center">
         <Outlet />
-      </div>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

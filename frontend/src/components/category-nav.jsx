@@ -1,7 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { Menu, X } from "lucide-react"; // Importamos iconos para el menú
-import { Link } from "react-router-dom"; // Importamos Link de react-router-dom
 
 const CategoryNav = ({ categories }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,23 +11,23 @@ const CategoryNav = ({ categories }) => {
         {/* Menú en pantallas grandes */}
         <div className="hidden md:flex space-x-6">
           {categories.map((category) => (
-            <Link
+            <a
               key={category}
-              to="/productos" // Ruta hacia la página de productos
+              href="/productos" // Ruta hacia la página de productos
               className="hover:text-gray-300 cursor-pointer transition-colors"
             >
               {category}
-            </Link>
+            </a>
           ))}
         </div>
 
         {/* Botón Publicar */}
-        <Link
-          to="/publicar"
+        <a
+          href="/publicar"
           className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors hidden md:block"
         >
           Publicar Producto
-        </Link>
+        </a>
 
         {/* Botón Hamburguesa para móviles */}
         <button
@@ -43,20 +42,20 @@ const CategoryNav = ({ categories }) => {
       {isOpen && (
         <div className="md:hidden bg-blue-600 text-white flex flex-col items-center py-4 space-y-3">
           {categories.map((category) => (
-            <Link
+            <a
               key={category}
-              to="/productos" // Ruta hacia la página de productos
+              href="/productos" // Ruta hacia la página de productos
               className="hover:text-gray-300 cursor-pointer transition-colors"
             >
               {category}
-            </Link>
+            </a>
           ))}
-          <Link
-            to="/publicar"
+          <a
+            href="/publicar"
             className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
           >
             Publicar Producto
-          </Link>
+          </a>
         </div>
       )}
     </nav>
