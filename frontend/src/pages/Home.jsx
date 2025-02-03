@@ -1,14 +1,19 @@
+import { useContext, useEffect } from "react";
 import CategoryList from "../components/category-list";
 import CategoryNav from "../components/category-nav";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import ProductCard from "../components/product-card";
-
-import { generateProducts, getUniqueCategories } from "../utils/fakerjs";
+import products from "../data/products";
+import { CartContext } from "../context/CartContext";
 
 function App() {
-  const products = generateProducts(7);
-  const categories = getUniqueCategories(products);
+  const categories = ["Tecnología", "Hogar", "Moda", "Deportes", "Juguetes"];
+  const { addToCart, cart } = useContext(CartContext);
+
+  useEffect(() => {
+    console.log(cart);
+  }, [cart]);
 
   return (
     <>
@@ -30,16 +35,12 @@ function App() {
       {/* Productos */}
       <div className="container mx-auto px-4">
         <h2 className="font-bold text-2xl md:text-4xl py-4">Productos</h2>
-
-        {/* Grid Responsivo */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.map((product) => (
             <ProductCard
               key={product.id}
-              link={product.id}
-              title={product.name}
-              price={product.price}
-              image={product.image}
+              product={product}
+              addToCart={addToCart}
             />
           ))}
         </div>

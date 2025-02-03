@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/product-card";
 import { generateProducts } from "../utils/fakerjs";
+import { useNavigate } from "react-router";
 
 function ProductsPage() {
   const products = generateProducts(20);
@@ -11,7 +11,7 @@ function ProductsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 9; // 3 productos por fila, 3 filas
   const totalPages = Math.ceil(products.length / productsPerPage);
-  
+
   const currentProducts = products.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
@@ -26,9 +26,11 @@ function ProductsPage() {
   };
 
   return (
-    <> 
+    <>
       <div className="container mx-auto px-4 py-6">
-        <h2 className="font-bold text-2xl md:text-4xl py-4 text-center">Todos los Productos</h2>
+        <h2 className="font-bold text-2xl md:text-4xl py-4 text-center">
+          Todos los Productos
+        </h2>
 
         {/* Grid de productos con espaciado adecuado */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
