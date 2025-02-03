@@ -4,15 +4,10 @@ import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import Category from "./category";
 
-// Importar imágenes desde assets
-import img1 from "../assets/ropa.jpg";
-import img2 from "../assets/zapatillas.jpg";
-import img3 from "../assets/articulos.jpg";
-
 const categories = [
-  { imageSrc: img1, title: "Ropa" },
-  { imageSrc: img2, title: "Zapatos" },
-  { imageSrc: img3, title: "Accesorios" },
+  { imageSrc: "/articulos.jpg", title: "Ropa" },
+  { imageSrc: "/zapatillas.jpg", title: "Zapatos" },
+  { imageSrc: "/ropa.jpg", title: "Accesorios" },
 ];
 
 const CategoryList = () => {

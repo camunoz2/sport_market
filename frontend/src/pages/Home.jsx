@@ -13,6 +13,7 @@ function App() {
 
   useEffect(() => {
     console.log(cart);
+    console.log(products);
   }, [cart]);
 
   return (

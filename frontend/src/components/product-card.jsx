@@ -25,7 +25,7 @@ const ProductCard = ({ product, addToCart }) => {
             Agregar al carro
           </button>
           <a
-            href={`productos/${product.id}`}
+            href={`/productos/${product.id.toString()}`}
             className="border-1 border-black rounded-sm bg-gray-300 px-4 py-2 w-full text-center cursor-pointer hover:bg-gray-500"
           >
             Ver Producto
