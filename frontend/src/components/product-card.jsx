@@ -1,6 +1,19 @@
 import PropTypes from "prop-types";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router";
 
 const ProductCard = ({ product, addToCart }) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleAddToCart = () => {
+    if (user) {
+      addToCart(product);
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="border-1 border-black rounded-sm flex flex-col">
       <div className="w-full rounded-t-sm overflow-hidden flex-shrink-0">
@@ -19,7 +32,7 @@ const ProductCard = ({ product, addToCart }) => {
 
         <div className="mt-auto flex gap-2">
           <button
-            onClick={() => addToCart(product)}
+            onClick={handleAddToCart}
             className="cursor-pointer border-1 border-black bg-blue-400 rounded-sm px-4 py-2 w-full text-center hover:bg-blue-600"
           >
             Agregar al carro
