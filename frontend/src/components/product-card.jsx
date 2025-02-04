@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router";
+import { productPropTypes } from "../data/products";
 
 const ProductCard = ({ product, addToCart }) => {
   const { user } = useAuth();
@@ -18,7 +19,7 @@ const ProductCard = ({ product, addToCart }) => {
     <div className="border-1 border-black rounded-sm flex flex-col">
       <div className="w-full rounded-t-sm overflow-hidden flex-shrink-0">
         <img
-          src={product.image}
+          src={product.imageUrl}
           className="w-full h-48 object-cover"
           alt="imagen producto"
         />
@@ -50,12 +51,7 @@ const ProductCard = ({ product, addToCart }) => {
 };
 
 ProductCard.propTypes = {
-  product: PropTypes.shape({
-    title: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    image: PropTypes.string.isRequired,
-    id: PropTypes.number.isRequired,
-  }),
+  product: PropTypes.shape(productPropTypes).isRequired,
   addToCart: PropTypes.func.isRequired,
 };
 

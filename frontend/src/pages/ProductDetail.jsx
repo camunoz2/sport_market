@@ -20,19 +20,19 @@ export default function ProductDetail() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col justify-center items-center min-h-screen p-4">
       <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-6 flex flex-col md:flex-row items-center">
         {/* Product Image */}
         <div className="w-full md:w-1/2 flex justify-center">
           <img
-            src={product.image}
+            src={product.imageUrl}
             alt={product.title}
             className="object-cover w-80 h-80 rounded-lg shadow-md"
           />
         </div>
         {/* Product Details */}
         <div className="w-full md:w-1/2 flex flex-col items-start mt-4 md:mt-0 md:ml-6">
-          <h1 className="text-2xl font-bold mb-2">{product.title}</h1>
+          <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
           <p className="text-xl font-bold mb-4">
             {product.price} <span className="text-sm font-light">clp</span>
           </p>
