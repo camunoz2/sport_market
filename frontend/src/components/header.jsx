@@ -41,7 +41,7 @@ const Header = () => {
               className="block md:inline text-white font-bold hover:underline mt-2 md:mt-0 px-3"
               onClick={() => navigate("/registro")}
             >
-              Registrarse
+              Registrarses
             </button>
             <div className="flex items-center">
               {user ? (
