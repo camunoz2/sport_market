@@ -1,18 +1,28 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import ProductCard from "../components/product-card";
-import { generateProducts } from "../utils/fakerjs";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
+import products from "../data/products";
+import { CartContext } from "../context/CartContext";
 
 function ProductsPage() {
-  const products = generateProducts(20);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { addToCart } = useContext(CartContext);
+
+  const queryParams = new URLSearchParams(location.search);
+  const selectedCategory = queryParams.get("category") || "Todos los Productos";
+
+  const filteredProducts =
+    selectedCategory === "Todos los Productos"
+      ? products
+      : products.filter((product) => product.category === selectedCategory);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 9; // 3 productos por fila, 3 filas
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  const productsPerPage = 10; // Define the number of products per page
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage); // Calculate total pages
 
-  const currentProducts = products.slice(
+  const currentProducts = filteredProducts.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
   );
@@ -29,7 +39,7 @@ function ProductsPage() {
     <>
       <div className="container mx-auto px-4 py-6">
         <h2 className="font-bold text-2xl md:text-4xl py-4 text-center">
-          Todos los Productos
+          {selectedCategory}
         </h2>
 
         {/* Grid de productos con espaciado adecuado */}
@@ -37,10 +47,8 @@ function ProductsPage() {
           {currentProducts.map((product) => (
             <ProductCard
               key={product.id}
-              link={`/product/${product.id}`}
-              title={product.name}
-              price={product.price}
-              image={product.image}
+              product={product}
+              addToCart={addToCart}
             />
           ))}
         </div>

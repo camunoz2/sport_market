@@ -1,9 +1,10 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { Menu, X } from "lucide-react"; // Importamos iconos para el menú
+import { generateCategories } from "../utils/generateCategories";
 
-const CategoryNav = ({ categories }) => {
+const CategoryNav = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const categories = generateCategories();
 
   return (
     <nav className="bg-blue-500 text-white">
@@ -63,7 +64,3 @@ const CategoryNav = ({ categories }) => {
 };
 
 export default CategoryNav;
-
-CategoryNav.propTypes = {
-  categories: PropTypes.arrayOf(PropTypes.string).isRequired,
-};

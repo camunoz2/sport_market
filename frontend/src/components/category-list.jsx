@@ -3,14 +3,17 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import Category from "./category";
+import { generateCategories } from "../utils/generateCategories";
 
-const categories = [
-  { imageSrc: "/articulos.jpg", title: "Ropa" },
-  { imageSrc: "/zapatillas.jpg", title: "Zapatos" },
-  { imageSrc: "/ropa.jpg", title: "Accesorios" },
-];
+const categoryBackgrounds = {
+  Zapatos: "/zapatillas.jpg",
+  Accesorios: "/articulos.jpg",
+  Ropa: "/ropa.jpg",
+};
 
 const CategoryList = () => {
+  const categories = generateCategories();
+
   return (
     <div className="container mx-auto px-4">
       <Swiper
@@ -27,9 +30,11 @@ const CategoryList = () => {
       >
         {categories.map((category, index) => (
           <SwiperSlide key={index}>
-            {/* Envolver cada imagen en un enlace para redirigir */}
-            <a href="/productos">
-              <Category imageSrc={category.imageSrc} title={category.title} />
+            <a href={`/productos?category=${category}`}>
+              <Category
+                imageSrc={categoryBackgrounds[category]}
+                title={category}
+              />
             </a>
           </SwiperSlide>
         ))}
