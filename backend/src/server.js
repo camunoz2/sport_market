@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import productsRoutes from './routes/productsRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -26,5 +27,8 @@ app.post('/api/register', (req, res) => {
   users.push({ email, password });
   res.status(201).json({ message: "usuario registrado bacan" });
 });
+
+// Usar las rutas de productos
+app.use('/api', productsRoutes);
 
 app.listen(5000, () => console.log("servido corriendo en 5000"));
