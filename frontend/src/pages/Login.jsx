@@ -40,6 +40,7 @@ function Login() {
               value={password}
               onChange={setPassword}
               placeholder="Ingrese su contraseña"
+              type={"password"}
             />
 
             <div className="flex justify-between w-full text-sm text-gray-300">
