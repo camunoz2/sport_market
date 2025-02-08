@@ -15,9 +15,9 @@ export default function CartPage() {
           <p className="text-gray-600 text-center">Tu carrito está vacío.</p>
         ) : (
           <div className="space-y-4">
-            {cart.map((item) => (
+            {cart.map((item, index) => (
               <div
-                key={item.id}
+                key={`${item.id}-${index}`} // Combina ID con índice para hacer la clave única
                 className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm"
               >
                 <div className="flex items-center gap-4">
@@ -36,6 +36,7 @@ export default function CartPage() {
                 </p>
               </div>
             ))}
+
 
             <div className="flex justify-between items-center mt-4 p-4 bg-gray-50 rounded-lg">
               <p className="text-xl font-semibold">Total:</p>

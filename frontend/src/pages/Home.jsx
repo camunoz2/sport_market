@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import CategoryList from "../components/category-list";
 import CategoryNav from "../components/category-nav";
 import Footer from "../components/footer";
@@ -10,11 +10,6 @@ import { CartContext } from "../context/CartContext";
 function App() {
   const categories = ["Tecnología", "Hogar", "Moda", "Deportes", "Juguetes"];
   const { addToCart, cart } = useContext(CartContext);
-
-  useEffect(() => {
-    console.log(cart);
-    console.log(products);
-  }, [cart]);
 
   return (
     <>
