@@ -7,7 +7,7 @@ import ProductCard from "../components/product-card";
 import products from "../data/products";
 import { CartContext } from "../context/CartContext";
 
-function App() {
+function Home() {
   const categories = ["Tecnología", "Hogar", "Moda", "Deportes", "Juguetes"];
   const { addToCart, cart } = useContext(CartContext);
 
@@ -52,4 +52,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;
