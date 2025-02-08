@@ -1,5 +1,5 @@
-import express from 'express';
-import cors from 'cors';
+import express from "express";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
@@ -7,7 +7,7 @@ app.use(cors());
 
 const users = [{ email: "test@test.com", password: "1234" }];
 
-app.post('/api/login', (req, res) => {
+app.post("/api/login", (req, res) => {
   const { email, password } = req.body;
   const user = users.find((u) => u.email === email && u.password === password);
 
@@ -18,7 +18,7 @@ app.post('/api/login', (req, res) => {
   }
 });
 
-app.post('/api/register', (req, res) => {
+app.post("/api/register", (req, res) => {
   const { email, password } = req.body;
   if (users.find((u) => u.email === email)) {
     return res.status(400).json({ message: "el usuario ya existe" });
