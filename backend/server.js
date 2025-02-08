@@ -1,18 +1,21 @@
 import express from 'express';
 import cors from 'cors';
+import fs from 'node:fs'
+
+let usersRawData = fs.readFileSync('./data/users.json')
+let usersJson = JSON.parse(usersRawData)
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const users = [{ email: "test@test.com", password: "1234" }];
-
 app.post('/api/login', (req, res) => {
+  console.log("Login!!")
   const { email, password } = req.body;
-  const user = users.find((u) => u.email === email && u.password === password);
+  const user = usersJson.users.find((u) => u.email === email && u.password === password);
 
   if (user) {
-    res.json({ token: "fake-jwt-token", email: user.email });
+    res.json({ token: "fake-jwt-token", email: user.email, name: user.name });
   } else {
     res.status(401).json({ message: "credeenciales invalidas" });
   }

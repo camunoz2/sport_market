@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
-import { useAuth } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 import { productPropTypes } from "../data/products";
+import { useContext } from "react";
 
 const ProductCard = ({ product, addToCart }) => {
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleAddToCart = () => {

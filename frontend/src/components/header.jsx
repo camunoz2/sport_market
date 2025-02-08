@@ -1,30 +1,15 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router";
-import { useAuth } from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
 
 const Header = () => {
-  const { user, logout, setUser } = useAuth();
+  const { user, logout } = useContext(AuthContext);
   const { cart } = useContext(CartContext);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadUser = () => {
-      const token = sessionStorage.getItem("jwt");
-      const email = sessionStorage.getItem("email");
-      if (token && email) {
-        setUser({ email });
-      }
-    };
-
-    loadUser();
-    window.addEventListener("storage", loadUser);
-    return () => window.removeEventListener("storage", loadUser);
-  }, [setUser]);
+  console.log(user);
 
   const handleLogout = () => {
-    sessionStorage.removeItem("jwt");
-    sessionStorage.removeItem("email");
     logout();
     navigate("/login");
   };
@@ -36,13 +21,22 @@ const Header = () => {
           <a href="/">
             <img src="/logo.svg" alt="Logo" className="h-8 mr-4" />
           </a>
-          <nav className="flex gap-2 items-center">
-            <button
-              className="block md:inline text-white font-bold hover:underline mt-2 md:mt-0 px-3"
-              onClick={() => navigate("/registro")}
-            >
-              Registrars
-            </button>
+          <nav className="flex gap-4 items-center">
+            {user ? (
+              <div className="flex text-center flex-col text-white">
+                <span>Hola, {user.name}</span>
+                <a href="/profile" className="font-bold hover:underline">
+                  Ingresar al perfil
+                </a>
+              </div>
+            ) : (
+              <button
+                className="block md:inline text-white font-bold hover:underline mt-2 md:mt-0 px-3"
+                onClick={() => navigate("/registro")}
+              >
+                Registrar
+              </button>
+            )}
             <div className="flex items-center">
               {user ? (
                 <>
