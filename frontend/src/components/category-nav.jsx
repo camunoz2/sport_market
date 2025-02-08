@@ -59,22 +59,6 @@ const CategoryNav = () => {
           </a>
         </div>
       )}
-      
-      {/* Botones de paginación responsivos */}
-      <div className="flex justify-center items-center mt-4 space-x-2">
-        <button className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 text-sm sm:text-base md:text-lg">
-          Primera
-        </button>
-        <button className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 text-sm sm:text-base md:text-lg">
-          Anterior
-        </button>
-        <button className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 text-sm sm:text-base md:text-lg">
-          Siguiente
-        </button>
-        <button className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 text-sm sm:text-base md:text-lg">
-          Última
-        </button>
-      </div>
     </nav>
   );
 };
