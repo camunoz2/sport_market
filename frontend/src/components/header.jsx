@@ -7,7 +7,7 @@ const Header = () => {
   const { user, logout } = useContext(AuthContext);
   const { cart } = useContext(CartContext);
   const navigate = useNavigate();
-  console.log(user);
+  // console.log(user);
 
   const handleLogout = () => {
     logout();

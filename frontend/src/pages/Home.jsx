@@ -12,8 +12,8 @@ function App() {
   const { addToCart, cart } = useContext(CartContext);
 
   useEffect(() => {
-    console.log(cart);
-    console.log(products);
+    // console.log(cart);
+    // console.log(products);
   }, [cart]);
 
   return (
