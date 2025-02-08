@@ -6,17 +6,21 @@ function Login() {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await login(email, password);
       if (response.success) {
-        alert(`Bienvenido ${response.name}`); // Use response.email instead of user.name
+        alert(`Bienvenido ${response.name}`);
       }
     } catch (err) {
-      console.error("Login error:", err); // Log the error details
+      console.error("Login error:", err);
       alert("El login falló. ¿Estás corriendo el backend?");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,9 +59,10 @@ function Login() {
 
             <button
               type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded w-full mt-4"
+              className={`bg-blue-500 text-white py-2 px-4 rounded w-full mt-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={loading}
             >
-              Iniciar sesión
+              {loading ? "Cargando..." : "Iniciar sesión"}
             </button>
           </form>
         </div>
