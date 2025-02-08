@@ -14,7 +14,7 @@ const CategoryNav = () => {
           {categories.map((category) => (
             <a
               key={category}
-              href="/productos" // Ruta hacia la página de productos
+              href={`/productos?category=${category}`} // Ruta con filtro por categoría
               className="hover:text-gray-300 cursor-pointer transition-colors"
             >
               {category}
@@ -45,7 +45,7 @@ const CategoryNav = () => {
           {categories.map((category) => (
             <a
               key={category}
-              href="/productos" // Ruta hacia la página de productos
+              href={`/productos?category=${category}`} // Ruta con filtro por categoría
               className="hover:text-gray-300 cursor-pointer transition-colors"
             >
               {category}
