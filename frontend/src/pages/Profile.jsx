@@ -1,4 +1,9 @@
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
 export const Profile = () => {
+  const { user } = useContext(AuthContext);
+
   return (
     <>
       <div className="flex flex-col items-center justify-center">
@@ -7,12 +12,13 @@ export const Profile = () => {
         <div className="w-5/6">
           <h2 className="text-2xl font-medium mb-3">Datos personales</h2>
           <p className="text-lg">
-            <strong>Nombre: </strong>Jesus Marco Cristian
+            <strong>Nombre: </strong>
+            {user.name}
           </p>
           <p className="text-lg">
             <strong>Email: </strong>
             <a href="mailto:correo@correo.cl" className="text-gray-500">
-              correo@sportmarket.cl
+              {user.email}
             </a>
           </p>
         </div>

@@ -1,20 +1,22 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 import UserInput from "../components/user-input";
-import { useAuth } from "../context/AuthContext";
 
 function Login() {
-  const { login } = useAuth();
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password, (userEmail) => {
-        alert(`Bienvenido ${userEmail}`);
-      });
+      const response = await login(email, password);
+      if (response.success) {
+        alert(`Bienvenido ${response.name}`); // Use response.email instead of user.name
+      }
     } catch (err) {
-      alert("El login falló. ¿Estás corriendo el backend?", err);
+      console.error("Login error:", err); // Log the error details
+      alert("El login falló. ¿Estás corriendo el backend?");
     }
   };
 
@@ -40,6 +42,7 @@ function Login() {
               value={password}
               onChange={setPassword}
               placeholder="Ingrese su contraseña"
+              type={"password"}
             />
 
             <div className="flex justify-between w-full text-sm text-gray-300">
