@@ -1,0 +1,19 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Zapatillas",
+      "image": "assets/zapatillas.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Articulos",
+      "image": "assets/articulos.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Ropa",
+      "image": "assets/ropa.jpg"
+    }
+  ]
+}

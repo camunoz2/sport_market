@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react"; // Importamos iconos para el menú
-import { generateCategories } from "../utils/generateCategories";
+import useCategories from "../hooks/useCategories";
 
 const CategoryNav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const categories = generateCategories();
+  const { categories } = useCategories();
 
   return (
     <nav className="bg-blue-500 text-white">
@@ -13,11 +13,11 @@ const CategoryNav = () => {
         <div className="hidden md:flex space-x-6">
           {categories.map((category) => (
             <a
-              key={category}
-              href={`/productos?category=${category}`} // Ruta con filtro por categoría
+              key={category.id}
+              href={`/productos?category=${category.name}`} // Ruta con filtro por categoría
               className="hover:text-gray-300 cursor-pointer transition-colors"
             >
-              {category}
+              {category.name}
             </a>
           ))}
         </div>
