@@ -1,68 +1,86 @@
-import { createContext, useState, useContext, useEffect } from "react";
-import PropTypes from "prop-types";
+import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 export const AuthContext = createContext();
 
 const getStoredUser = () => {
   const email = sessionStorage.getItem("email");
   const token = sessionStorage.getItem("jwt");
+  const name = sessionStorage.getItem("name");
+
   if (email && token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    return { email };
+    return { email, name };
   }
   return null;
 };
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(getStoredUser);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const login = async (email, password, callback) => {
+  const login = async (email, password) => {
+    console.log("Login attempt with", email);
+    setIsLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/login", {
-        email,
-        password,
-      });
-      const { token, email: userEmail } = response.data;
+      const response = await axios.post(
+        "http://localhost:5000/api/login",
+        {
+          email: email,
+          password: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const { token, name, email: userEmail } = response.data; // Rename destructured email
 
       sessionStorage.setItem("jwt", token);
       sessionStorage.setItem("email", userEmail);
+      sessionStorage.setItem("name", name);
 
-      setUser({ email: userEmail });
+      setUser({ name, email: userEmail });
+
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      // Call the callback once user is set
-      if (callback) callback(userEmail);
-    } catch (err) {
-      throw new Error("El login falló.", err);
+      return { success: true, email: userEmail, name: name };
+    } catch (error) {
+      console.error("Login error:", error); // Log the error details
+      const message =
+        error.response?.data?.message || "Login failed. Please try again.";
+      throw new Error(message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const logout = () => {
-    sessionStorage.removeItem("jwt");
-    sessionStorage.removeItem("email");
-
+    sessionStorage.clear();
     setUser(null);
     delete axios.defaults.headers.common["Authorization"];
   };
 
   useEffect(() => {
-    if (user) {
-      const token = sessionStorage.getItem("jwt");
-      if (token) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      }
+    const token = sessionStorage.getItem("jwt");
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
-  }, [user]);
+  }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, setUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = {
+    user,
+    login,
+    logout,
+    isLoading,
+    isAuthenticated: !!user,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-
-export const useAuth = () => useContext(AuthContext);
 
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,

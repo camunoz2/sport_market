@@ -1,20 +1,26 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 import UserInput from "../components/user-input";
-import { useAuth } from "../context/AuthContext";
 
 function Login() {
-  const { login } = useAuth();
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      await login(email, password, (userEmail) => {
-        alert(`Bienvenido ${userEmail}`);
-      });
+      const response = await login(email, password);
+      if (response.success) {
+        alert(`Bienvenido ${response.name}`);
+      }
     } catch (err) {
-      alert("El login falló. ¿Estás corriendo el backend?", err);
+      console.error("Login error:", err);
+      alert("El login falló. ¿Estás corriendo el backend?");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,6 +46,7 @@ function Login() {
               value={password}
               onChange={setPassword}
               placeholder="Ingrese su contraseña"
+              type={"password"}
             />
 
             <div className="flex justify-between w-full text-sm text-gray-300">
@@ -52,9 +59,10 @@ function Login() {
 
             <button
               type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded w-full mt-4"
+              className={`bg-blue-500 text-white py-2 px-4 rounded w-full mt-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              disabled={loading}
             >
-              Iniciar sesión
+              {loading ? "Cargando..." : "Iniciar sesión"}
             </button>
           </form>
         </div>
