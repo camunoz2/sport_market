@@ -1,24 +1,22 @@
-
-
-import React, { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router";
 
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
+    name: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    address: "",
+    city: "",
+    state: "",
+    zip: "",
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,20 +28,23 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/register', formData);
-      setSuccess('Usuario registrado con éxito');
+      const response = await axios.post(
+        "http://localhost:5454/api/register",
+        formData
+      );
+      setSuccess("Usuario registrado con éxito");
       setTimeout(() => navigate("/login"), 2000); // Redirigir a la página de login después del registro exitoso
     } catch (err) {
-      setError('Error al registrar el usuario');
+      setError("Error al registrar el usuario", err);
     }
   };
 
@@ -55,11 +56,17 @@ const Register = () => {
           <h2 className="text-3xl font-bold text-white text-center md:text-left">
             Registro de usuarios
           </h2>
-          <img src="/register.svg" alt="Registro" className="max-w-xs mx-auto md:max-w-md" />
+          <img
+            src="/register.svg"
+            alt="Registro"
+            className="max-w-xs mx-auto md:max-w-md"
+          />
         </div>
 
         <div className="p-8">
-          <h2 className="text-xl font-semibold text-gray-700 mb-6">Ingresa tus datos</h2>
+          <h2 className="text-xl font-semibold text-gray-700 mb-6">
+            Ingresa tus datos
+          </h2>
           {error && <p className="text-red-500">{error}</p>}
           {success && <p className="text-green-500">{success}</p>}
           <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
@@ -163,16 +170,25 @@ const Register = () => {
               />
             </div>
             <div className="flex gap-4 mt-4 flex-col md:flex-row">
-              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-lg w-full md:w-[48%]">
+              <button
+                type="submit"
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg w-full md:w-[48%]"
+              >
                 Registrarse
               </button>
-              <button type="button" className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg w-full md:w-[48%]">
+              <button
+                type="button"
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg w-full md:w-[48%]"
+              >
                 Cancelar
               </button>
             </div>
           </form>
           <div className="flex justify-center mt-8">
-            <button onClick={() => navigate("/")} className="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors">
+            <button
+              onClick={() => navigate("/")}
+              className="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors"
+            >
               Regresar al Home
             </button>
           </div>
