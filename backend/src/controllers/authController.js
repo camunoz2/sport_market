@@ -29,10 +29,34 @@ export const login = (req, res) => {
 };
 
 export const register = (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, lastName, email, password, address, city, state, zip } =
+    req.body;
 
-  // Aquí podrías agregar la lógica para registrar al usuario (guardar los datos en un archivo o base de datos)
+  // Verificar si el usuario ya existe
+  if (usersJson.users.find((user) => user.email === email)) {
+    return res.status(400).json({ message: "El usuario ya existe" });
+  }
+
+  // Crear un nuevo usuario
+  const newUser = {
+    id: usersJson.users.length + 1,
+    name,
+    lastName,
+    email,
+    password,
+    address,
+    city,
+    state,
+    zip,
+  };
+
+  // Agregar el nuevo usuario al array de usuarios
+  usersJson.users.push(newUser);
+
+  // Guardar los datos actualizados en el archivo JSON
+  fs.writeFileSync(filePath, JSON.stringify(usersJson, null, 2));
+
   return res
     .status(201)
-    .json({ message: "Usuario registrado con éxito", name, email });
+    .json({ message: "Usuario registrado con éxito", email });
 };

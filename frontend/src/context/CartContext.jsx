@@ -1,8 +1,8 @@
-import { createContext, useReducer } from "react";
+import { createContext, useReducer, useContext } from "react";
 import useProducts from "../hooks/useProducts";
 import PropTypes from "prop-types";
 
-const CartContext = createContext();
+export const CartContext = createContext();
 
 const cartReducer = (state, action) => {
   switch (action.type) {
@@ -14,11 +14,11 @@ const cartReducer = (state, action) => {
 };
 
 export function CartProvider({ children }) {
-  const [cart, dispatch] = useReducer(cartReducer, []);
-  const { products, loading, error } = useProducts();
+  const [cart, setCart] = useReducer(cartReducer, []);
+  const { loading, error } = useProducts();
 
   const addToCart = (product) => {
-    dispatch({ type: "ADD_TO_CART", payload: product });
+    setCart((prevCart) => [...prevCart, product]);
   };
 
   if (loading) {
@@ -30,14 +30,14 @@ export function CartProvider({ children }) {
   }
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, products }}>
+    <CartContext.Provider value={{ cart, addToCart }}>
       {children}
     </CartContext.Provider>
   );
 }
 
+export const useCart = () => useContext(CartContext);
+
 CartProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
-
-export { CartContext };

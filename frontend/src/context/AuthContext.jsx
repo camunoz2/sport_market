@@ -2,8 +2,7 @@ import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 
-// Define types for better code completion and error catching
-export const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 const getStoredUser = () => {
   const email = sessionStorage.getItem("email");

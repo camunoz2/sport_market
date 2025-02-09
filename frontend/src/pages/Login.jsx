@@ -15,6 +15,7 @@ function Login() {
       const response = await login(email, password);
       if (response.success) {
         alert(`Bienvenido ${response.name}`);
+        window.location.href = "/"; // Redirige al Home utilizando window.location.href
       }
     } catch (err) {
       console.error("Login error:", err);
