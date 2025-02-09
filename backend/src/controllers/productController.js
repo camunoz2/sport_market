@@ -30,7 +30,7 @@ export const postProduct = (req, res) => {
 export const getCategories = (req, res) => {
   const categoriesWithImages = categories.categories.map((category) => ({
     ...category,
-    image: `http://localhost:5000/assets/${category.image}`,
+    image: `http://localhost:5454/assets/${category.image}`,
   }));
   res.json({ categories: categoriesWithImages });
 };

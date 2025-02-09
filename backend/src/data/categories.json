@@ -3,17 +3,17 @@
     {
       "id": 1,
       "name": "Zapatillas",
-      "image": "assets/zapatillas.jpg"
+      "image": "zapatillas.jpg"
     },
     {
       "id": 2,
       "name": "Articulos",
-      "image": "assets/articulos.jpg"
+      "image": "articulos.jpg"
     },
     {
       "id": 3,
       "name": "Ropa",
-      "image": "assets/ropa.jpg"
+      "image": "ropa.jpg"
     }
   ]
 }

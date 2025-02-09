@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/login",
+        "http://localhost:5454/api/login",
         {
           email: email,
           password: password,

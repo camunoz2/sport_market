@@ -6,16 +6,14 @@ import Header from "../components/header";
 import ProductCard from "../components/product-card";
 import products from "../data/products";
 import { CartContext } from "../context/CartContext";
-import useCategories from "../hooks/useCategories";
 
 function Home() {
   const { addToCart, cart } = useContext(CartContext);
-  const { categories } = useCategories();
 
   return (
     <>
       <Header />
-      <CategoryNav categories={categories} />
+      <CategoryNav />
       {/* Imagen destacada responsiva */}
       <img
         src="/featured.png"

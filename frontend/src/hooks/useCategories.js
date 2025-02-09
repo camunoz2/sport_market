@@ -7,9 +7,12 @@ function useCategories() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/categories"
-        );
+        const response = await axios.get("http://localhost:5454/api/categories", {
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+          },
+        });
         setCategories(response.data.categories);
         console.log("Categories fetched:", response.data.categories);
       } catch (error) {
