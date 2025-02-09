@@ -1,13 +1,14 @@
 import { useState, useContext } from "react";
 import ProductCard from "../components/product-card";
 import { useNavigate, useLocation } from "react-router";
-import products from "../data/products";
 import { CartContext } from "../context/CartContext";
+import useProducts from "../hooks/useProducts";
 
 function ProductsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToCart } = useContext(CartContext);
+  const { products, loading, error } = useProducts();
 
   const queryParams = new URLSearchParams(location.search);
   const selectedCategory = queryParams.get("category") || "Todos los Productos";
@@ -15,7 +16,7 @@ function ProductsPage() {
   const filteredProducts =
     selectedCategory === "Todos los Productos"
       ? products
-      : products.filter((product) => product.category === selectedCategory);
+      : products.filter((product) => product.category_id === selectedCategory);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,6 +35,14 @@ function ProductsPage() {
   const handleGoToHome = () => {
     navigate("/"); // Redirige al Home
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <>

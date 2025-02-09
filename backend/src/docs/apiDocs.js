@@ -43,4 +43,8 @@ export const apiDocs = {
     },
   },
   testDBConnection: { method: "GET", url: "/api/test-db" },
+  getProducts: {
+    method: "GET",
+    url: "/api/products",
+  },
 };
