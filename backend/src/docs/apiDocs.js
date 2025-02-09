@@ -42,4 +42,5 @@ export const apiDocs = {
       categories: [{ id: "string", name: "string" }],
     },
   },
+  testDBConnection: { method: "GET", url: "/api/test-db" },
 };
