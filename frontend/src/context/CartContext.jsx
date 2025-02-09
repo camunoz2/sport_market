@@ -1,34 +1,24 @@
-import { createContext, useReducer } from "react";
-import products from "../data/products";
+import { createContext, useState, useContext } from "react";
 import PropTypes from "prop-types";
 
-const CartContext = createContext();
+export const CartContext = createContext();
 
-const cartReducer = (state, action) => {
-  switch (action.type) {
-    case "ADD_TO_CART":
-      return [...state, action.payload];
-    default:
-      return state;
-  }
-};
-
-export function CartProvider({ children }) {
-  const [cart, dispatch] = useReducer(cartReducer, []);
+export const CartProvider = ({ children }) => {
+  const [cart, setCart] = useState([]);
 
   const addToCart = (product) => {
-    dispatch({ type: "ADD_TO_CART", payload: product });
+    setCart((prevCart) => [...prevCart, product]);
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, products }}>
+    <CartContext.Provider value={{ cart, addToCart }}>
       {children}
     </CartContext.Provider>
   );
-}
+};
+
+export const useCart = () => useContext(CartContext);
 
 CartProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
-
-export { CartContext };
