@@ -12,3 +12,4 @@ app.use("/api", authRoutes);  // Esto establecerá las rutas /api/login y /api/r
 app.listen(5000, () => {
   console.log("Servidor corriendo en el puerto 5000");
 });
+
