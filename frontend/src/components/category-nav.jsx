@@ -1,10 +1,22 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Menu, X } from "lucide-react"; // Importamos iconos para el menú
 import useCategories from "../hooks/useCategories";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router";
 
 const CategoryNav = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { categories } = useCategories();
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handlePublishClick = () => {
+    if (user) {
+      navigate("/publicar");
+    } else {
+      alert("Primero debes logearte o registrarte para publicar productos");
+    }
+  };
 
   return (
     <nav className="bg-blue-500 text-white">
@@ -23,12 +35,12 @@ const CategoryNav = () => {
         </div>
 
         {/* Botón Publicar */}
-        <a
-          href="/publicar"
+        <button
+          onClick={handlePublishClick}
           className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors hidden md:block"
         >
           Publicar Producto
-        </a>
+        </button>
 
         {/* Botón Hamburguesa para móviles */}
         <button
@@ -44,19 +56,19 @@ const CategoryNav = () => {
         <div className="md:hidden bg-blue-600 text-white flex flex-col items-center py-4 space-y-3">
           {categories.map((category) => (
             <a
-              key={category}
-              href={`/productos?category=${category}`} // Ruta con filtro por categoría
+              key={category.id}
+              href={`/productos?category=${category.name}`} // Ruta con filtro por categoría
               className="hover:text-gray-300 cursor-pointer transition-colors"
             >
-              {category}
+              {category.name}
             </a>
           ))}
-          <a
-            href="/publicar"
+          <button
+            onClick={handlePublishClick}
             className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
           >
             Publicar Producto
-          </a>
+          </button>
         </div>
       )}
     </nav>

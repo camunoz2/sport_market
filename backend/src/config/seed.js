@@ -3,6 +3,7 @@ import pool from "../config/db.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,17 +26,23 @@ if (!DATABASE_URL || !SEED_FILE) {
     await pool.query(sql);
 
     console.log("Inserting products...");
-    for (let i = 1; i <= 20; i++) {
+    const imagePath = path.join(__dirname, "../../assets/notfound.webp");
+    const image = await fs.promises.readFile(imagePath);
+
+    for (let i = 1; i <= 10; i++) {
+      20;
       const category =
         categories[Math.floor(Math.random() * categories.length)];
+
       await pool.query(
-        "INSERT INTO products (id, title, description, price, category_id) VALUES ($1, $2, $3, $4, $5)",
+        "INSERT INTO products (id, title, description, price, category_id, image) VALUES ($1, $2, $3, $4, $5, $6)",
         [
           uuidv4(),
           `Product ${i}`,
           `Description for product ${i}`,
           (Math.random() * 100).toFixed(2),
           category.name, // Use category name as category_id
+          image, // Store image as BYTEA
         ],
       );
     }

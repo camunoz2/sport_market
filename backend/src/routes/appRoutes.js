@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import { login, register } from "../controllers/authController.js";
 import {
   postProduct,
@@ -8,10 +9,11 @@ import {
 import testDBConnection from "../helpers/testDBConnection.js";
 
 const router = express.Router();
+const upload = multer();
 
 router.post("/login", login);
 router.post("/register", register);
-router.post("/post", postProduct);
+router.post("/post", upload.single("image"), postProduct);
 router.get("/categories", getCategories);
 router.get("/products", getProducts);
 

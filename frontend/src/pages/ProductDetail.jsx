@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router";
 import useProducts from "../hooks/useProducts";
 
@@ -7,6 +8,7 @@ export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const { addToCart } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
   const { products, loading, error } = useProducts();
 
   useEffect(() => {
@@ -15,6 +17,14 @@ export default function ProductDetail() {
       setProduct(foundProduct);
     }
   }, [id, products]);
+
+  const handleAddToCart = () => {
+    if (user) {
+      addToCart(product);
+    } else {
+      alert("Deberías primero logearte o registrarte");
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -34,7 +44,9 @@ export default function ProductDetail() {
         {/* Product Image */}
         <div className="w-full md:w-1/2 flex justify-center">
           <img
-            src={product.image}
+            src={
+              product.image || `http://localhost:5454/assets/${product.image}`
+            }
             alt={product.title}
             className="object-cover w-80 h-80 rounded-lg shadow-md"
           />
@@ -47,7 +59,7 @@ export default function ProductDetail() {
           </p>
           <p className="mb-4">{product.description}</p>
           <button
-            onClick={() => addToCart(product)}
+            onClick={handleAddToCart}
             className="cursor-pointer border-1 border-black bg-blue-400 rounded-sm px-4 py-2 w-full text-center hover:bg-blue-600"
           >
             Agregar al carro

@@ -1,31 +1,52 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router";
+import useCategories from "../hooks/useCategories";
+import { AuthContext } from "../context/AuthContext";
+import axios from "axios";
 
-const CreateListing = () => {
+const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
-  let navigate = useNavigate();
+  const { categories, loading, error } = useCategories();
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setImage(URL.createObjectURL(file));
+      setImage(file);
     }
   };
 
-  const handlePublishClick = () => {
-    // Verificar si el usuario está autenticado en el localStorage (puedes usar otro método según tu lógica)
-    const isAuthenticated = sessionStorage.getItem("jwt");
+  const handlePublishClick = async () => {
+    if (user) {
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("price", price);
+      formData.append("category_id", category);
+      formData.append("image", image);
 
-    if (isAuthenticated) {
-      // Si está autenticado, continuar con la publicación
-      // Aquí puedes agregar la lógica para enviar los datos del formulario
-      alert("Producto publicado con éxito");
+      try {
+        const response = await axios.post(
+          "http://localhost:5454/api/post",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        alert("Producto publicado con éxito");
+        navigate(`/productos/${response.data.id}`);
+      } catch (error) {
+        alert("Error publicando el producto: " + error.message);
+      }
     } else {
-      // Si no está autenticado, redirigir al login
+      alert("Primero debes logearte o registrarte para publicar productos");
       navigate("/login");
     }
   };
@@ -37,7 +58,7 @@ const CreateListing = () => {
         <label className="cursor-pointer w-full flex flex-col items-center border border-gray-300 p-6 rounded-lg text-center">
           {image ? (
             <img
-              src={image}
+              src={URL.createObjectURL(image)}
               alt="Preview"
               className="w-full h-40 object-cover"
             />
@@ -72,13 +93,20 @@ const CreateListing = () => {
           onChange={(e) => setPrice(e.target.value)}
           className="w-full p-2 mb-2 border rounded"
         />
-        <input
-          type="text"
-          placeholder="Categoría"
+        <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="w-full p-2 mb-4 border rounded"
-        />
+        >
+          <option value="">Seleccionar Categoría</option>
+          {loading && <option>Loading...</option>}
+          {error && <option>Error loading categories</option>}
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.name}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
 
         {/* Botones */}
         <div className="flex flex-col lg:flex-row justify-between">
@@ -88,20 +116,16 @@ const CreateListing = () => {
           >
             Publicar
           </button>
-          <button className="bg-gray-400 text-white px-4 py-2 rounded cursor-pointer">
+          <button
+            onClick={() => navigate("/")}
+            className="bg-gray-400 text-white px-4 py-2 rounded cursor-pointer"
+          >
             Cancelar
           </button>
         </div>
-        {/* Botón Volver al Home */}
-        <button
-          onClick={() => navigate("/")}
-          className="mt-6 bg-green-500 text-white px-6 py-2 rounded cursor-pointer"
-        >
-          Volver al Home
-        </button>
       </div>
     </div>
   );
 };
 
-export default CreateListing;
+export default CreatePost;
