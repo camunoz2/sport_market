@@ -13,6 +13,10 @@ app.use(express.json());
 app.use(cors());
 const port = 5454;
 
+app.get("/", async (req, res) => {
+  res.send("API home funcionando");
+});
+
 // Serve static files
 app.use("/assets", express.static(path.join(__dirname, "assets")));
 
@@ -22,4 +26,3 @@ app.use("/api", appRoutes);
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
-
