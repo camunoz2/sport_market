@@ -11,6 +11,9 @@ const ProductCard = ({ product, addToCart }) => {
     if (user) {
       addToCart(product);
     } else {
+      alert(
+        "Primero debes logearte o registrarte para agregar productos al carro"
+      );
       navigate("/login");
     }
   };
