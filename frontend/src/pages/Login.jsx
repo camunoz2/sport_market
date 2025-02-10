@@ -7,19 +7,22 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError(""); // Reset error message
     try {
       const response = await login(email, password);
       if (response.success) {
-        alert(`Bienvenido ${response.name}`);
         window.location.href = "/"; // Redirige al Home utilizando window.location.href
+      } else {
+        setError("Credenciales incorrectas. Por favor, inténtalo de nuevo.");
       }
     } catch (err) {
       console.error("Login error:", err);
-      alert("El login falló. ¿Estás corriendo el backend?");
+      setError("El login falló. Verifica los datos e intenta nuevamente");
     } finally {
       setLoading(false);
     }
@@ -49,6 +52,12 @@ function Login() {
               placeholder="Ingrese su contraseña"
               type={"password"}
             />
+
+            {error && (
+              <div className="bg-red-500 text-white p-2 rounded mt-4">
+                {error}
+              </div>
+            )}
 
             <div className="flex justify-between w-full text-sm text-gray-300">
               <div className="flex gap-2">
