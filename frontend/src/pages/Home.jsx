@@ -4,17 +4,17 @@ import CategoryNav from "../components/category-nav";
 import Footer from "../components/footer";
 import Header from "../components/header";
 import ProductCard from "../components/product-card";
-import products from "../data/products";
 import { CartContext } from "../context/CartContext";
+import useProducts from "../hooks/useProducts";
 
 function Home() {
-  const categories = ["Tecnología", "Hogar", "Moda", "Deportes", "Juguetes"];
-  const { addToCart, cart } = useContext(CartContext);
+  const { addToCart } = useContext(CartContext);
+  const { products } = useProducts();
 
   return (
     <>
       <Header />
-      <CategoryNav categories={categories} />
+      <CategoryNav />
       {/* Imagen destacada responsiva */}
       <img
         src="/featured.png"

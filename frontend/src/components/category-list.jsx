@@ -3,16 +3,10 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination, Autoplay } from "swiper/modules";
 import Category from "./category";
-import { generateCategories } from "../utils/generateCategories";
-
-const categoryBackgrounds = {
-  Zapatos: "/zapatillas.jpg",
-  Accesorios: "/articulos.jpg",
-  Ropa: "/ropa.jpg",
-};
+import useCategories from "../hooks/useCategories";
 
 const CategoryList = () => {
-  const categories = generateCategories();
+  const { categories } = useCategories();
 
   return (
     <div className="container mx-auto px-4">
@@ -30,11 +24,8 @@ const CategoryList = () => {
       >
         {categories.map((category, index) => (
           <SwiperSlide key={index}>
-            <a href={`/productos?category=${category}`}>
-              <Category
-                imageSrc={categoryBackgrounds[category]}
-                title={category}
-              />
+            <a href={`/productos?category=${category.name}`}>
+              <Category imageSrc={category.image} title={category.name} />
             </a>
           </SwiperSlide>
         ))}

@@ -2,9 +2,9 @@ import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
 export default function CartPage() {
-  const { cart } = useContext(CartContext);
+  const { cart, removeFromCart } = useContext(CartContext);
 
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen p-4">
@@ -15,9 +15,9 @@ export default function CartPage() {
           <p className="text-gray-600 text-center">Tu carrito está vacío.</p>
         ) : (
           <div className="space-y-4">
-            {cart.map((item, index) => (
+            {cart.map((item) => (
               <div
-                key={`${item.id}-${index}`} // Combina ID con índice para hacer la clave única
+                key={item.cartId}
                 className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm"
               >
                 <div className="flex items-center gap-4">
@@ -31,12 +31,19 @@ export default function CartPage() {
                     <p className="text-gray-500">{item.description}</p>
                   </div>
                 </div>
-                <p className="text-lg font-bold text-gray-900">
-                  ${item.price.toFixed(2)}
-                </p>
+                <div className="flex items-center gap-4">
+                  <p className="text-lg font-bold text-gray-900">
+                    ${parseFloat(item.price).toFixed(2)}
+                  </p>
+                  <button
+                    onClick={() => removeFromCart(item)}
+                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </div>
             ))}
-
 
             <div className="flex justify-between items-center mt-4 p-4 bg-gray-50 rounded-lg">
               <p className="text-xl font-semibold">Total:</p>

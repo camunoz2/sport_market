@@ -1,15 +1,25 @@
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
+import appRoutes from "./src/routes/appRoutes.js";
 import cors from "cors";
-import authRoutes from "./src/routes/authRoutes.js"; // Asegúrate de que esta ruta sea correcta
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+const port = 5454;
 
-// Usa las rutas de autenticación
-app.use("/api", authRoutes);  // Esto establecerá las rutas /api/login y /api/register
+// Serve static files
+app.use("/assets", express.static(path.join(__dirname, "assets")));
 
-app.listen(5000, () => {
-  console.log("Servidor corriendo en el puerto 5000");
+// Use the app routes
+app.use("/api", appRoutes);
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
 

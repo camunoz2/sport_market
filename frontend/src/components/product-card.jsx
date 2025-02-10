@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router";
-import { productPropTypes } from "../data/products";
 import { useContext } from "react";
 
 const ProductCard = ({ product, addToCart }) => {
@@ -12,6 +11,9 @@ const ProductCard = ({ product, addToCart }) => {
     if (user) {
       addToCart(product);
     } else {
+      alert(
+        "Primero debes logearte o registrarte para agregar productos al carro"
+      );
       navigate("/login");
     }
   };
@@ -20,7 +22,7 @@ const ProductCard = ({ product, addToCart }) => {
     <div className="border-1 border-black rounded-sm flex flex-col">
       <div className="w-full rounded-t-sm overflow-hidden flex-shrink-0">
         <img
-          src={product.imageUrl}
+          src={product.image}
           className="w-full h-48 object-cover"
           alt="imagen producto"
         />
@@ -52,7 +54,13 @@ const ProductCard = ({ product, addToCart }) => {
 };
 
 ProductCard.propTypes = {
-  product: PropTypes.shape(productPropTypes).isRequired,
+  product: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    price: PropTypes.string.isRequired,
+    image: PropTypes.string,
+  }).isRequired,
   addToCart: PropTypes.func.isRequired,
 };
 

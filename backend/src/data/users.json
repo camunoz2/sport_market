@@ -21,6 +21,17 @@
       "city": "santiago",
       "state": "metropolitana",
       "zip": "8360250"
+    },
+    {
+      "id": 3,
+      "name": "criks",
+      "lastName": "asd",
+      "email": "a@a.com",
+      "password": "1234",
+      "address": "asdf",
+      "city": "asdf",
+      "state": "asdf",
+      "zip": "sadf"
     }
   ]
 }
