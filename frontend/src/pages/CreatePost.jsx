@@ -10,7 +10,7 @@ const CreatePost = () => {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
-  const { categories, loading, error } = useCategories();
+  const { data, isLoading, isError, error } = useCategories();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -99,9 +99,9 @@ const CreatePost = () => {
           className="w-full p-2 mb-4 border rounded"
         >
           <option value="">Seleccionar Categoría</option>
-          {loading && <option>Loading...</option>}
-          {error && <option>Error loading categories</option>}
-          {categories.map((cat) => (
+          {isLoading && <option>Loading...</option>}
+          {isError && <option>Error loading categories {error.message}</option>}
+          {data.map((cat) => (
             <option key={cat.id} value={cat.name}>
               {cat.name}
             </option>

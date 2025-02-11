@@ -18,7 +18,7 @@ const cartReducer = (state, action) => {
 
 export function CartProvider({ children }) {
   const [cart, dispatch] = useReducer(cartReducer, []);
-  const { products, loading, error } = useProducts();
+  const { data } = useProducts();
 
   const addToCart = (product) => {
     dispatch({ type: "ADD_TO_CART", payload: product });
@@ -28,16 +28,8 @@ export function CartProvider({ children }) {
     dispatch({ type: "REMOVE_FROM_CART", payload: product });
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, products }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, data }}>
       {children}
     </CartContext.Provider>
   );

@@ -1,12 +1,9 @@
-import useFetch from "./useFetch";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "../api/queries";
 
-function useProducts() {
-  const {
-    data: products,
-    loading,
-    error,
-  } = useFetch("http://localhost:5454/api/products");
-  return { products, loading, error };
+export default function useProducts() {
+  return useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
 }
-
-export default useProducts;

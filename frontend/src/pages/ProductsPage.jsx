@@ -8,15 +8,15 @@ function ProductsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToCart } = useContext(CartContext);
-  const { products, loading, error } = useProducts();
+  const { error, isError, isPending, data } = useProducts();
 
   const queryParams = new URLSearchParams(location.search);
   const selectedCategory = queryParams.get("category") || "Todos los Productos";
 
   const filteredProducts =
     selectedCategory === "Todos los Productos"
-      ? products
-      : products.filter((product) => product.category_id === selectedCategory);
+      ? data
+      : data.filter((product) => product.category_id === selectedCategory);
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -36,12 +36,12 @@ function ProductsPage() {
     navigate("/"); // Redirige al Home
   };
 
-  if (loading) {
+  if (isPending) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (isError) {
+    return <div>Error: {error?.message}</div>;
   }
 
   return (
