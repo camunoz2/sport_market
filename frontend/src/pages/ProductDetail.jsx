@@ -3,6 +3,8 @@ import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router";
 import useProducts from "../hooks/useProducts";
+import LoadingSpinner from '../components/LoadingSpinner';
+
 
 
 export default function ProductDetail() {
@@ -28,7 +30,7 @@ export default function ProductDetail() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error) {

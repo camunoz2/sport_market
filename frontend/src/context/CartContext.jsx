@@ -2,6 +2,8 @@ import { createContext, useReducer } from "react";
 import useProducts from "../hooks/useProducts";
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
+import LoadingSpinner from '../components/LoadingSpinner';
+
 
 const CartContext = createContext();
 
@@ -29,7 +31,7 @@ export function CartProvider({ children }) {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error) {
