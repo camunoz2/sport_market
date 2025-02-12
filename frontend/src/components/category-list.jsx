@@ -6,7 +6,7 @@ import Category from "./category";
 import useCategories from "../hooks/useCategories";
 
 const CategoryList = () => {
-  const { categories } = useCategories();
+  const { data } = useCategories();
 
   return (
     <div className="container mx-auto px-4">
@@ -22,7 +22,7 @@ const CategoryList = () => {
         modules={[Pagination, Autoplay]}
         className="w-full"
       >
-        {categories.map((category, index) => (
+        {data?.categories.map((category, index) => (
           <SwiperSlide key={index}>
             <a href={`/productos?category=${category.name}`}>
               <Category imageSrc={category.image} title={category.name} />
