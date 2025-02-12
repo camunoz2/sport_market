@@ -1,5 +1,7 @@
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 export async function getProducts() {
-  const response = await fetch("http://localhost:5454/api/products");
+  const response = await fetch(`${BASE_URL}/api/products`);
   if (!response.ok) {
     throw new Error("No se pudo hacer fetch a los productos");
   }
@@ -7,7 +9,7 @@ export async function getProducts() {
 }
 
 export async function getCategories() {
-  const response = await fetch("http://localhost:5454/api/categories");
+  const response = await fetch(`${BASE_URL}/api/categories`);
   if (!response.ok) {
     throw new Error("No se pudo hacer fetch a las categorias");
   }

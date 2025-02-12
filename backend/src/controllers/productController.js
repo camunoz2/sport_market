@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 import pool from "../config/db.js";
+import { HOST, PORT } from "../../server.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,7 +45,7 @@ export const postProduct = async (req, res) => {
 export const getCategories = (req, res) => {
   const categoriesWithImages = categories.categories.map((category) => ({
     ...category,
-    image: `http://localhost:5454/assets/${category.image}`,
+    image: `${HOST}:${PORT}/assets/${category.image}`,
   }));
   res.json({ categories: categoriesWithImages });
 };

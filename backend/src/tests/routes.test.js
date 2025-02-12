@@ -1,7 +1,8 @@
 import request from "supertest";
 import { describe, test, expect } from "@jest/globals";
+import { HOST, PORT } from "../../server";
 
-const BACKEND_URL = "http://localhost:5454";
+const BACKEND_URL = `${HOST}:${PORT}`;
 
 describe("Pagina inicio", () => {
   test("GET /", async () => {
