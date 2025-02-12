@@ -3,25 +3,30 @@ import ProductCard from "../components/product-card";
 import { useNavigate, useLocation } from "react-router";
 import { CartContext } from "../context/CartContext";
 import useProducts from "../hooks/useProducts";
-import LoadingSpinner from '../components/LoadingSpinner';
-
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function ProductsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToCart } = useContext(CartContext);
-  const { products, loading, error } = useProducts();
+  const { error, isError, isPending, data } = useProducts();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const queryParams = new URLSearchParams(location.search);
-  const selectedCategory = queryParams.get("category") || "Todos los Productos";
+  const selectedCategory = queryParams.get("category");
 
+  if (isPending) {
+    return <LoadingSpinner />;
+  }
+
+  if (isError) {
+    return <div>Error: {error?.message}</div>;
+  }
   const filteredProducts =
     selectedCategory === "Todos los Productos"
-      ? products
-      : products.filter((product) => product.category_id === selectedCategory);
+      ? data
+      : data?.filter((product) => product.category_id === selectedCategory);
 
-  // Paginación
-  const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10; // Define the number of products per page
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage); // Calculate total pages
 
@@ -37,14 +42,6 @@ function ProductsPage() {
   const handleGoToHome = () => {
     navigate("/"); // Redirige al Home
   };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
 
   return (
     <>

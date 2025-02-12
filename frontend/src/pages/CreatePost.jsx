@@ -10,9 +10,17 @@ const CreatePost = () => {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState(null);
-  const { categories, loading, error } = useCategories();
+  const { data, isLoading, isError, error } = useCategories();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  if (isError) {
+    return <div>Error, {error.message}</div>;
+  }
+
+  if (isLoading) {
+    return <div>Cargando...</div>;
+  }
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -99,9 +107,9 @@ const CreatePost = () => {
           className="w-full p-2 mb-4 border rounded"
         >
           <option value="">Seleccionar Categoría</option>
-          {loading && <option>Loading...</option>}
-          {error && <option>Error loading categories</option>}
-          {categories.map((cat) => (
+          {isLoading && <option>Loading...</option>}
+          {isError && <option>Error loading categories {error.message}</option>}
+          {data?.categories.map((cat) => (
             <option key={cat.id} value={cat.name}>
               {cat.name}
             </option>

@@ -2,8 +2,6 @@ import { createContext, useReducer } from "react";
 import useProducts from "../hooks/useProducts";
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
-import LoadingSpinner from '../components/LoadingSpinner';
-
 
 const CartContext = createContext();
 
@@ -20,7 +18,7 @@ const cartReducer = (state, action) => {
 
 export function CartProvider({ children }) {
   const [cart, dispatch] = useReducer(cartReducer, []);
-  const { products, loading, error } = useProducts();
+  const { data } = useProducts();
 
   const addToCart = (product) => {
     dispatch({ type: "ADD_TO_CART", payload: product });
@@ -30,16 +28,8 @@ export function CartProvider({ children }) {
     dispatch({ type: "REMOVE_FROM_CART", payload: product });
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, products }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, data }}>
       {children}
     </CartContext.Provider>
   );
