@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 
 const CategoryNav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { categories } = useCategories();
+  const { isError, error, data, isLoading } = useCategories();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -18,12 +18,20 @@ const CategoryNav = () => {
     }
   };
 
+  if (isLoading) {
+    <div>Cargando...</div>;
+  }
+
+  if (isError) {
+    return <div>Error: {error.message}</div>;
+  }
+
   return (
     <nav className="bg-blue-500 text-white">
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         {/* Menú en pantallas grandes */}
         <div className="hidden md:flex space-x-6">
-          {categories.map((category) => (
+          {data?.categories.map((category) => (
             <a
               key={category.id}
               href={`/productos?category=${category.name}`} // Ruta con filtro por categoría
@@ -54,7 +62,7 @@ const CategoryNav = () => {
       {/* Menú desplegable en móviles */}
       {isOpen && (
         <div className="md:hidden bg-blue-600 text-white flex flex-col items-center py-4 space-y-3">
-          {categories.map((category) => (
+          {data.map((category) => (
             <a
               key={category.id}
               href={`/productos?category=${category.name}`} // Ruta con filtro por categoría

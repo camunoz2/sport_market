@@ -1,12 +1,9 @@
-import useFetch from "./useFetch";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "../api/queries";
 
-function useProducts() {
-  const {
-    data: products,
-    loading,
-    error,
-  } = useFetch(`${import.meta.env.VITE_API_URL}/api/products`);
-  return { products, loading, error };
+export default function useProducts() {
+  return useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
 }
-
-export default useProducts;

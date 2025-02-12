@@ -1,12 +1,9 @@
-import useFetch from "./useFetch";
+import { useQuery } from "@tanstack/react-query";
+import { getCategories } from "../api/queries";
 
-function useCategories() {
-  const {
-    data: categories,
-    loading,
-    error,
-  } = useFetch(`${import.meta.env.VITE_API_URL}/api/categories`);
-  return { categories, loading, error };
+export default function useCategories() {
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategories,
+  });
 }
-
-export default useCategories;
