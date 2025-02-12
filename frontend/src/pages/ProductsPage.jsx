@@ -9,17 +9,23 @@ function ProductsPage() {
   const location = useLocation();
   const { addToCart } = useContext(CartContext);
   const { error, isError, isPending, data } = useProducts();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const queryParams = new URLSearchParams(location.search);
-  const selectedCategory = queryParams.get("category") || "Todos los Productos";
+  const selectedCategory = queryParams.get("category");
 
+  if (isPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error: {error?.message}</div>;
+  }
   const filteredProducts =
     selectedCategory === "Todos los Productos"
       ? data
-      : data.filter((product) => product.category_id === selectedCategory);
+      : data?.filter((product) => product.category_id === selectedCategory);
 
-  // Paginación
-  const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 10; // Define the number of products per page
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage); // Calculate total pages
 
@@ -35,14 +41,6 @@ function ProductsPage() {
   const handleGoToHome = () => {
     navigate("/"); // Redirige al Home
   };
-
-  if (isPending) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error: {error?.message}</div>;
-  }
 
   return (
     <>

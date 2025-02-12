@@ -14,6 +14,14 @@ const CreatePost = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  if (isError) {
+    return <div>Error, {error.message}</div>;
+  }
+
+  if (isLoading) {
+    return <div>Cargando...</div>;
+  }
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -101,7 +109,7 @@ const CreatePost = () => {
           <option value="">Seleccionar Categoría</option>
           {isLoading && <option>Loading...</option>}
           {isError && <option>Error loading categories {error.message}</option>}
-          {data.map((cat) => (
+          {data?.categories.map((cat) => (
             <option key={cat.id} value={cat.name}>
               {cat.name}
             </option>

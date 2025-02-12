@@ -1,23 +1,25 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useMemo } from "react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router";
 import useProducts from "../hooks/useProducts";
 
-
 export default function ProductDetail() {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
-  const { products, loading, error } = useProducts();
+  const { data, isLoading, isError, error } = useProducts();
 
-  useEffect(() => {
-    if (products.length > 0) {
-      const foundProduct = products.find((product) => product.id === id);
-      setProduct(foundProduct);
-    }
-  }, [id, products]);
+  // Memoize the product to avoid recalculating on every render
+  const product = useMemo(() => {
+    return data?.find((product) => product.id === id);
+  }, [id, data]);
+
+  if (isLoading) return <div>Loading...</div>;
+
+  if (isError) return <div>Error: {error.message}</div>;
+
+  if (!product) return <div>Product not found</div>;
 
   const handleAddToCart = () => {
     if (user) {
@@ -26,18 +28,6 @@ export default function ProductDetail() {
       alert("Deberías primero logearte o registrarte");
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  if (!product) {
-    return <div>Product not found</div>;
-  }
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen p-4">

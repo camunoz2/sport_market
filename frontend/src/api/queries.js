@@ -3,7 +3,7 @@ export async function getProducts() {
   if (!response.ok) {
     throw new Error("No se pudo hacer fetch a los productos");
   }
-  return response.json();
+  return await response.json();
 }
 
 export async function getCategories() {
@@ -11,5 +11,5 @@ export async function getCategories() {
   if (!response.ok) {
     throw new Error("No se pudo hacer fetch a las categorias");
   }
-  return response.json();
+  return await response.json();
 }
