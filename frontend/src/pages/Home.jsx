@@ -6,6 +6,7 @@ import Header from "../components/header";
 import ProductCard from "../components/product-card";
 import { CartContext } from "../context/CartContext";
 import useProducts from "../hooks/useProducts";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function Home() {
   const { addToCart } = useContext(CartContext);
@@ -37,7 +38,7 @@ function Home() {
         <h2 className="font-bold text-2xl md:text-4xl py-4">Productos</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {!data && isLoading ? (
-            <div>Cargando...</div>
+            <LoadingSpinner />
           ) : (
             data?.map((product) => (
               <ProductCard

@@ -3,6 +3,7 @@ import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router";
 import useProducts from "../hooks/useProducts";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -15,7 +16,7 @@ export default function ProductDetail() {
     return data?.find((product) => product.id === id);
   }, [id, data]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoadingSpinner />;
 
   if (isError) return <div>Error: {error.message}</div>;
 

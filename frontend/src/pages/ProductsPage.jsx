@@ -3,6 +3,7 @@ import ProductCard from "../components/product-card";
 import { useNavigate, useLocation } from "react-router";
 import { CartContext } from "../context/CartContext";
 import useProducts from "../hooks/useProducts";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 function ProductsPage() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ function ProductsPage() {
   const selectedCategory = queryParams.get("category");
 
   if (isPending) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (isError) {
