@@ -9,7 +9,7 @@
     "seed-db": "node --env-file .env ./src/config/seed.js",
     "build": "npm run clean && npm run copy",
     "clean": "rm -rf dist",
-    "copy": "cp -r src dist && cp server.js dist",
+    "copy": "mkdir -p dist/src && cp -r src/* dist/src && cp server.js dist/ && cp -r assets dist/",
     "start": "NODE_ENV=production node --experimental-modules dist/server.js"
   },
   "keywords": [],
