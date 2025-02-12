@@ -5,7 +5,7 @@ function useCategories() {
     data: categories,
     loading,
     error,
-  } = useFetch("http://localhost:5454/api/categories");
+  } = useFetch(`${import.meta.env.VITE_API_URL}/api/categories`);
   return { categories, loading, error };
 }
 

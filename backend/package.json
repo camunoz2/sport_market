@@ -4,9 +4,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js ./src/tests",    
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js ./src/tests",
     "dev": "nodemon --env-file=.env server.js",
-    "seed-db": "node --env-file .env ./src/config/seed.js"
+    "seed-db": "node --env-file .env ./src/config/seed.js",
+    "build": "npm run clean && npm run copy",
+    "clean": "rm -rf dist",
+    "copy": "cp -r src dist && cp server.js dist",
+    "start": "NODE_ENV=production node dist/server.js"
   },
   "keywords": [],
   "author": "",

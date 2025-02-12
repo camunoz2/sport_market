@@ -5,7 +5,7 @@ function useProducts() {
     data: products,
     loading,
     error,
-  } = useFetch("http://localhost:5454/api/products");
+  } = useFetch(`${import.meta.env.VITE_API_URL}/api/products`);
   return { products, loading, error };
 }
 

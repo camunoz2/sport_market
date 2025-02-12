@@ -3,9 +3,7 @@ import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router";
 import useProducts from "../hooks/useProducts";
-import LoadingSpinner from '../components/LoadingSpinner';
-
-
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -48,7 +46,8 @@ export default function ProductDetail() {
         <div className="w-full md:w-1/2 flex justify-center">
           <img
             src={
-              product.image || `http://localhost:5454/assets/${product.image}`
+              product.image ||
+              `${import.meta.env.VITE_API_URL}/assets/${product.image}`
             }
             alt={product.title}
             className="object-cover w-80 h-80 rounded-lg shadow-md"

@@ -32,7 +32,7 @@ const CreatePost = () => {
 
       try {
         const response = await axios.post(
-          "http://localhost:5454/api/post",
+          `${import.meta.env.VITE_API_URL}/api/post`,
           formData,
           {
             headers: {
