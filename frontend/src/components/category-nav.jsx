@@ -1,30 +1,10 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react"; // Importamos iconos para el menú
 import useCategories from "../hooks/useCategories";
-import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router";
 
 const CategoryNav = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { isError, error, data, isLoading } = useCategories();
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const handlePublishClick = () => {
-    if (user) {
-      navigate("/publicar");
-    } else {
-      alert("Primero debes logearte o registrarte para publicar productos");
-    }
-  };
-
-  if (isLoading) {
-    <div>Cargando...</div>;
-  }
-
-  if (isError) {
-    return <div>Error: {error.message}</div>;
-  }
+  const { data } = useCategories();
 
   return (
     <nav className="bg-blue-500 text-white">
@@ -41,14 +21,6 @@ const CategoryNav = () => {
             </a>
           ))}
         </div>
-
-        {/* Botón Publicar */}
-        <button
-          onClick={handlePublishClick}
-          className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors hidden md:block"
-        >
-          Publicar Producto
-        </button>
 
         {/* Botón Hamburguesa para móviles */}
         <button
@@ -71,12 +43,6 @@ const CategoryNav = () => {
               {category.name}
             </a>
           ))}
-          <button
-            onClick={handlePublishClick}
-            className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-          >
-            Publicar Producto
-          </button>
         </div>
       )}
     </nav>
