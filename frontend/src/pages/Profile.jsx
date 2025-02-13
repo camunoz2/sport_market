@@ -15,6 +15,14 @@ export const Profile = () => {
     navigate("/");
   };
 
+  const handlePublishClick = () => {
+    if (user) {
+      navigate("/publicar");
+    } else {
+      alert("Primero debes logearte o registrarte para publicar productos");
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col items-center justify-center">
@@ -33,7 +41,14 @@ export const Profile = () => {
             </a>
           </p>
         </div>
-        <div className="w-5/6 border-t-[0.1px] border-gray-300 my-5"></div>
+        <div className="w-5/6 border-t-[0.1px] border-gray-300 my-5">
+          <button
+            onClick={handlePublishClick}
+            className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors hidden md:block"
+          >
+            Publicar Producto
+          </button>
+        </div>
         <div className="flex gap-4">
           <button
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-blue-600"
