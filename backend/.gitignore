@@ -2,4 +2,3 @@ node_modules
 .env
 .env.production
 dist
-src/data/uploads/*

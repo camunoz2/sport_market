@@ -22,7 +22,7 @@ const ProductCard = ({ product, addToCart }) => {
     <div className="border-1 border-black rounded-sm flex flex-col">
       <div className="w-full rounded-t-sm overflow-hidden flex-shrink-0">
         <img
-          src={import.meta.env.VITE_API_URL + product.image}
+          src={product.image}
           className="w-full h-48 object-cover"
           alt="imagen producto"
         />
