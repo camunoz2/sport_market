@@ -35,7 +35,7 @@ const CreatePost = () => {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("category_id", category);
+      formData.append("category", category);
       formData.append("image", image);
 
       try {
@@ -110,7 +110,7 @@ const CreatePost = () => {
           {isLoading && <option>Loading...</option>}
           {isError && <option>Error loading categories {error.message}</option>}
           {data?.categories.map((cat) => (
-            <option key={cat.id} value={cat.name}>
+            <option key={cat.id} value={cat.id}>
               {cat.name}
             </option>
           ))}

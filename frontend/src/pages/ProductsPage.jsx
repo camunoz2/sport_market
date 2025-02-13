@@ -25,7 +25,7 @@ function ProductsPage() {
   const filteredProducts =
     selectedCategory === "Todos los Productos"
       ? data
-      : data?.filter((product) => product.category_id === selectedCategory);
+      : data?.filter((product) => product.category === selectedCategory);
 
   const productsPerPage = 10; // Define the number of products per page
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage); // Calculate total pages

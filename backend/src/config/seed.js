@@ -26,23 +26,37 @@ if (!DATABASE_URL || !SEED_FILE) {
     await pool.query(sql);
 
     console.log("Inserting products...");
-    const imagePath = path.join(__dirname, "../../assets/notfound.webp");
-    const image = await fs.promises.readFile(imagePath);
+    const imagePath = path.join(__dirname, "../../assets/notfound.png");
+    const uploadDir = path.join(__dirname, "../data/uploads");
+
+    // Ensure the uploads directory exists
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
 
     for (let i = 1; i <= 10; i++) {
-      20;
       const category =
         categories[Math.floor(Math.random() * categories.length)];
 
+      // Create a unique filename for each image
+      const uniqueFilename = `${Date.now()}-${i}.webp`;
+      const destinationPath = path.join(uploadDir, uniqueFilename);
+
+      // Copy the image to the uploads directory
+      await fs.promises.copyFile(imagePath, destinationPath);
+
+      // Store the relative path in the database
+      const relativeImagePath = `/uploads/${uniqueFilename}`;
+
       await pool.query(
-        "INSERT INTO products (id, title, description, price, category_id, image) VALUES ($1, $2, $3, $4, $5, $6)",
+        "INSERT INTO products (id, title, description, price, category, image) VALUES ($1, $2, $3, $4, $5, $6)",
         [
           uuidv4(),
           `Product ${i}`,
           `Description for product ${i}`,
           (Math.random() * 100).toFixed(2),
-          category.name, // Use category name as category_id
-          image, // Store image as BYTEA
+          category.name,
+          relativeImagePath, // Store the relative path as VARCHAR
         ],
       );
     }

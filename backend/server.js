@@ -21,6 +21,10 @@ app.get("/", async (req, res) => {
 
 // Serve static files
 app.use("/assets", express.static(path.join(__dirname, "assets")));
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "src", "data", "uploads")),
+);
 
 // Use the app routes
 app.use("/api", appRoutes);

@@ -7,9 +7,19 @@ import {
   getProducts,
 } from "../controllers/productController.js";
 import testDBConnection from "../helpers/testDBConnection.js";
+import path from "path";
 
 const router = express.Router();
-const upload = multer();
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(process.cwd(), "src/data/uploads"));
+  },
+  filename: (req, file, cb) => {
+    const unique = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, unique + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage: storage });
 
 router.post("/login", login);
 router.post("/register", register);
