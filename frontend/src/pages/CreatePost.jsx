@@ -110,7 +110,7 @@ const CreatePost = () => {
           {isLoading && <option>Loading...</option>}
           {isError && <option>Error loading categories {error.message}</option>}
           {data?.categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
+            <option key={cat.id} value={cat.name}>
               {cat.name}
             </option>
           ))}

@@ -22,7 +22,7 @@ export const postProduct = async (req, res) => {
     return res.status(400).json({ message: "Faltan datos" });
   }
 
-  const imagePath = `../data/uploads/${image.filename}`;
+  const imagePath = `/uploads/${image.filename}`;
   const id = uuidv4();
 
   try {
