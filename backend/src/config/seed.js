@@ -4,15 +4,42 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 import fs from "fs";
+import s3Client from "./aws.js";
+import mime from "mime-types";
+import { Upload } from "@aws-sdk/lib-storage";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const { DATABASE_URL, SEED_FILE } = process.env;
+const { DATABASE_URL, SEED_FILE, AWS_BUCKET_NAME } = process.env;
 
-if (!DATABASE_URL || !SEED_FILE) {
-  console.error("DATABASE_URL or SEED_FILE environment variable is missing.");
+if (!DATABASE_URL || !SEED_FILE || !AWS_BUCKET_NAME) {
+  console.error(
+    "DATABASE_URL or SEED_FILE or AWS_BUCKET_NAME environment variable is missing.",
+  );
   process.exit(1);
+}
+
+async function uploadFileToS3(filePath, fileName) {
+  const fileBuffer = await fs.promises.readFile(filePath);
+  const mimeType = mime.lookup(fileName) || "application/octect-stream";
+
+  const parallelUpload = new Upload({
+    client: s3Client,
+    params: {
+      Bucket: AWS_BUCKET_NAME,
+      Key: `uploads-sportmarket/${fileName}`,
+      Body: fileBuffer,
+      ContentType: mimeType,
+    },
+  });
+
+  parallelUpload.on("httpUploadProgress", (progress) => {
+    console.log("Upload progress:", progress);
+  });
+
+  const result = await parallelUpload.done();
+  return result.Location;
 }
 
 (async () => {
@@ -26,27 +53,15 @@ if (!DATABASE_URL || !SEED_FILE) {
     await pool.query(sql);
 
     console.log("Inserting products...");
-    const imagePath = path.join(__dirname, "../../assets/notfound.png");
-    const uploadDir = path.join(__dirname, "../data/uploads");
-
-    // Ensure the uploads directory exists
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    const localImagePath = path.join(__dirname, "../../assets/notfound.png");
 
     for (let i = 1; i <= 10; i++) {
       const category =
         categories[Math.floor(Math.random() * categories.length)];
 
-      // Create a unique filename for each image
-      const uniqueFilename = `${Date.now()}-${i}.webp`;
-      const destinationPath = path.join(uploadDir, uniqueFilename);
+      const uniqueFilename = `${Date.now()}-${i}.png`;
 
-      // Copy the image to the uploads directory
-      await fs.promises.copyFile(imagePath, destinationPath);
-
-      // Store the relative path in the database
-      const relativeImagePath = `/uploads/${uniqueFilename}`;
+      const s3Url = await uploadFileToS3(localImagePath, uniqueFilename);
 
       await pool.query(
         "INSERT INTO products (id, title, description, price, category, image) VALUES ($1, $2, $3, $4, $5, $6)",
@@ -56,7 +71,7 @@ if (!DATABASE_URL || !SEED_FILE) {
           `Description for product ${i}`,
           (Math.random() * 100).toFixed(2),
           category.name,
-          relativeImagePath, // Store the relative path as VARCHAR
+          s3Url,
         ],
       );
     }

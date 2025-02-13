@@ -16,19 +16,18 @@ const categories = JSON.parse(rawCategories);
 
 export const postProduct = async (req, res) => {
   const { title, description, price, category } = req.body;
-  const image = req.file;
+  const imageUrl = req.file.location;
 
-  if (!title || !description || !price || !category || !image) {
+  if (!title || !description || !price || !category || !imageUrl) {
     return res.status(400).json({ message: "Faltan datos" });
   }
 
-  const imagePath = `/uploads/${image.filename}`;
   const id = uuidv4();
 
   try {
     await pool.query(
       "INSERT INTO products (id, title, description, price, category, image) VALUES ($1, $2, $3, $4, $5, $6)",
-      [id, title, description, price, category, imagePath],
+      [id, title, description, price, category, imageUrl],
     );
     return res.status(201).json({
       message: "Producto publicado correctamente",
@@ -37,7 +36,7 @@ export const postProduct = async (req, res) => {
       description,
       price,
       category,
-      image: imagePath,
+      image: imageUrl,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
