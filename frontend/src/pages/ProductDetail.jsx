@@ -36,10 +36,7 @@ export default function ProductDetail() {
         {/* Product Image */}
         <div className="w-full md:w-1/2 flex justify-center">
           <img
-            src={
-              product.image ||
-              `${import.meta.env.VITE_API_URL}/assets/${product.image}`
-            }
+            src={import.meta.env.VITE_API_URL + product.image}
             alt={product.title}
             className="object-cover w-80 h-80 rounded-lg shadow-md"
           />

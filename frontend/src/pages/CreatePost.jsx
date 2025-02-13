@@ -35,7 +35,7 @@ const CreatePost = () => {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("price", price);
-      formData.append("category_id", category);
+      formData.append("category", category);
       formData.append("image", image);
 
       try {

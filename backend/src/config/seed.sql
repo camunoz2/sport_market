@@ -8,6 +8,6 @@ CREATE TABLE products (
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
   price NUMERIC(10, 2) NOT NULL,
-  category_id VARCHAR(255) NOT NULL,
-  image BYTEA NOT NULL
+  category VARCHAR(255) NOT NULL,
+  image VARCHAR(255) NOT NULL
 );
