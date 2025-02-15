@@ -7,6 +7,7 @@ import { HOST, PORT } from "../../server.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 const rawCategories = fs.readFileSync(
   path.join(__dirname, "../data/categories.json"),
@@ -44,9 +45,10 @@ export const postProduct = async (req, res) => {
 };
 
 export const getCategories = (req, res) => {
+  const baseUrl = isDevelopment ? `${HOST}:${PORT}` : HOST;
   const categoriesWithImages = categories.categories.map((category) => ({
     ...category,
-    image: `${HOST}:${PORT}/assets/${category.image}`,
+    image: `${baseUrl}/assets/${category.image}`,
   }));
   res.json({ categories: categoriesWithImages });
 };
