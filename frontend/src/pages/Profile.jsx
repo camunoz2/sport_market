@@ -42,25 +42,27 @@ export const Profile = () => {
           </p>
         </div>
         <div className="w-5/6 border-t-[0.1px] border-gray-300 my-5">
-          <button
-            onClick={handlePublishClick}
-            className="bg-green-500 font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors hidden md:block"
-          >
-            Publicar Producto
-          </button>
+         
         </div>
-        <div className="flex gap-4">
-          <button
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        <div className="flex gap-4 mt-5">
+        <button
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-amber-500 transition-colors hidden md:block"
             onClick={handleLogout}
           >
             Cerrar sesión
           </button>
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors hidden md:block"
             onClick={handleGoHome}
           >
             Volver al Home
+          </button>
+
+          <button
+            onClick={handlePublishClick}
+            className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors hidden md:block"
+          >
+            Publicar Producto
           </button>
         </div>
       </div>
