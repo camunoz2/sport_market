@@ -15,3 +15,14 @@ export async function getCategories() {
   }
   return await response.json();
 }
+
+export async function getProductById(id) {
+  if (!id) {
+    throw new Error("Se debe proporcionar un id para el producto");
+  }
+  const response = await fetch(`${BASE_URL}/api/products/${id}`);
+  if (!response.ok) {
+    throw new Error("No se pudo hacer fetch al producto");
+  }
+  return await response.json();
+}
