@@ -1,9 +1,48 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { CartContext } from "../context/CartContext";
 
 export default function CartPage() {
   const { cart, removeFromCart } = useContext(CartContext);
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const paymentStatus = params.get("success");
+
+    if (paymentStatus) {
+      if (paymentStatus === "true") {
+        alert("Pago exitoso!");
+      } else {
+        alert("Pago fallido!");
+      }
+    }
+
+    navigate("/cart", { replace: true });
+  }, [location.search]);
+
+  const handlePay = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pay`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          products: cart,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        window.location.href = data.url;
+      } else {
+        console.error("El pago fallo:", data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
 
   return (
@@ -54,7 +93,7 @@ export default function CartPage() {
 
             <button
               className="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded w-full text-center mt-4"
-              onClick={() => alert("Checkout not implemented yet!")}
+              onClick={handlePay}
             >
               Proceder al Pago
             </button>
