@@ -1,15 +1,16 @@
+
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
 export default function CartPage() {
-  const { cart, removeFromCart } = useContext(CartContext);
+  const { cart, removeFromCart, updateQuantity } = useContext(CartContext);
 
-  const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen p-4">
       <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Tu Carrito</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">Tu Carrito</h1>
 
         {cart.length === 0 ? (
           <p className="text-gray-600 text-center">Tu carrito está vacío.</p>
@@ -18,9 +19,9 @@ export default function CartPage() {
             {cart.map((item) => (
               <div
                 key={item.cartId}
-                className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm"
+                className="flex flex-col md:flex-row items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm"
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 w-full md:w-auto">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -31,9 +32,23 @@ export default function CartPage() {
                     <p className="text-gray-500">{item.description}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 mt-2 md:mt-0">
+                  <button
+                    onClick={() => updateQuantity(item.cartId, item.quantity - 1)}
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-1 px-3 ml-5 rounded"
+                    disabled={item.quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span className="text-lg font-semibold">{item.quantity}</span>
+                  <button
+                    onClick={() => updateQuantity(item.cartId, item.quantity + 1)}
+                    className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-1 px-3 rounded"
+                  >
+                    +
+                  </button>
                   <p className="text-lg font-bold text-gray-900">
-                    ${parseFloat(item.price).toFixed(2)}
+                    ${(item.price * item.quantity).toFixed(2)}
                   </p>
                   <button
                     onClick={() => removeFromCart(item)}
@@ -71,3 +86,4 @@ export default function CartPage() {
     </div>
   );
 }
+

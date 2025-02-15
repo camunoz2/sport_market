@@ -8,9 +8,15 @@ const CartContext = createContext();
 const cartReducer = (state, action) => {
   switch (action.type) {
     case "ADD_TO_CART":
-      return [...state, { ...action.payload, cartId: uuidv4() }];
+      return [...state, { ...action.payload, cartId: uuidv4(), quantity: 1 }];
     case "REMOVE_FROM_CART":
       return state.filter((item) => item.cartId !== action.payload.cartId);
+    case "UPDATE_QUANTITY":
+      return state.map((item) =>
+        item.cartId === action.payload.cartId
+          ? { ...item, quantity: Math.max(1, action.payload.quantity) }
+          : item
+      );
     default:
       return state;
   }
@@ -28,8 +34,12 @@ export function CartProvider({ children }) {
     dispatch({ type: "REMOVE_FROM_CART", payload: product });
   };
 
+  const updateQuantity = (cartId, quantity) => {
+    dispatch({ type: "UPDATE_QUANTITY", payload: { cartId, quantity } });
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, data }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, data }}>
       {children}
     </CartContext.Provider>
   );
@@ -40,3 +50,4 @@ CartProvider.propTypes = {
 };
 
 export { CartContext };
+
