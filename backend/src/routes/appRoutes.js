@@ -7,6 +7,7 @@ import {
 } from "../controllers/productController.js";
 import testDBConnection from "../helpers/testDBConnection.js";
 import upload from "../config/uploadConfig.js";
+import { processPayment } from "../controllers/paymenController.js";
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ router.post("/register", register);
 router.post("/post", upload.single("image"), postProduct);
 router.get("/categories", getCategories);
 router.get("/products", getProducts);
-
+router.post("/pay", processPayment);
 router.get("/test-db", async (req, res) => {
   try {
     await testDBConnection();
