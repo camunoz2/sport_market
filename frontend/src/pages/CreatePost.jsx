@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import useCategories from "../hooks/useCategories";
 import { AuthContext } from "../context/AuthContext";
+import { handleWholeNumberInput } from "../utils/inputHandler.js";
 import axios from "axios";
 
 const CreatePost = () => {
@@ -46,7 +47,7 @@ const CreatePost = () => {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
         alert("Producto publicado con éxito");
         navigate(`/productos/${response.data.id}`);
@@ -95,10 +96,10 @@ const CreatePost = () => {
           className="w-full p-2 mb-2 border rounded"
         />
         <input
-          type="number"
+          type="text"
           placeholder="Precio"
           value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          onChange={(e) => handleWholeNumberInput(e, setPrice)}
           className="w-full p-2 mb-2 border rounded"
         />
         <select
