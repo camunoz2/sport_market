@@ -4,6 +4,7 @@ import {
   postProduct,
   getCategories,
   getProducts,
+  getProductById,
 } from "../controllers/productController.js";
 import testDBConnection from "../helpers/testDBConnection.js";
 import upload from "../config/uploadConfig.js";
@@ -16,6 +17,7 @@ router.post("/register", register);
 router.post("/post", upload.single("image"), postProduct);
 router.get("/categories", getCategories);
 router.get("/products", getProducts);
+router.get("/products/:id", getProductById);
 router.post("/pay", processPayment);
 router.get("/test-db", async (req, res) => {
   try {
