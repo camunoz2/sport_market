@@ -2,19 +2,14 @@ import { useContext, useMemo } from "react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { useParams } from "react-router";
-import useProducts from "../hooks/useProducts";
+import useProduct from "../hooks/useProduct";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const { addToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
-  const { data, isLoading, isError, error } = useProducts();
-
-  // Memoize the product to avoid recalculating on every render
-  const product = useMemo(() => {
-    return data?.find((product) => product.id === id);
-  }, [id, data]);
+  const { data: product, isLoading, isError, error } = useProduct(id);
 
   if (isLoading) return <LoadingSpinner />;
 
