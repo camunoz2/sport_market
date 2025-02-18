@@ -34,10 +34,10 @@ export const AuthProvider = ({ children }) => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
-      const { token, name, email: userEmail } = response.data; // Rename destructured email
+      const { token, name, email: userEmail } = response.data;
 
       sessionStorage.setItem("jwt", token);
       sessionStorage.setItem("email", userEmail);
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
       return { success: true, email: userEmail, name: name };
     } catch (error) {
-      console.error("Login error:", error); // Log the error details
+      console.error("Login error:", error);
       const message =
         error.response?.data?.message || "Login failed. Please try again.";
       throw new Error(message);
@@ -69,6 +69,23 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
+  }, []);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const email = sessionStorage.getItem("email");
+      const name = sessionStorage.getItem("name");
+      if (email) {
+        setUser({ email, name });
+      } else {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const value = {

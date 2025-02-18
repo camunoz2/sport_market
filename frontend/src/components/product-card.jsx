@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 import { useContext } from "react";
+import { formatNumber } from "../utils/formatNumber.js";
 
 const ProductCard = ({ product, addToCart }) => {
   const { user } = useContext(AuthContext);
@@ -12,7 +13,7 @@ const ProductCard = ({ product, addToCart }) => {
       addToCart(product);
     } else {
       alert(
-        "Primero debes logearte o registrarte para agregar productos al carro"
+        "Primero debes logearte o registrarte para agregar productos al carro",
       );
       navigate("/login");
     }
@@ -31,7 +32,8 @@ const ProductCard = ({ product, addToCart }) => {
       <div className="p-4 flex flex-col flex-1">
         <h2 className="font-bold text-xl mb-2">{product.title}</h2>
         <h3 className="text-2xl font-bold mb-4">
-          {product.price} <span className="text-sm font-light">clp</span>
+          {formatNumber(product.price)}
+          <span className="text-sm font-light">clp</span>
         </h3>
 
         <div className="mt-auto flex gap-2">
@@ -58,7 +60,7 @@ ProductCard.propTypes = {
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    price: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
     image: PropTypes.string,
   }).isRequired,
   addToCart: PropTypes.func.isRequired,

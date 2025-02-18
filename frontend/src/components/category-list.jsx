@@ -24,7 +24,7 @@ const CategoryList = () => {
       >
         {data?.categories.map((category, index) => (
           <SwiperSlide key={index}>
-            <a href={`/productos?category=${category.name}`}>
+            <a href={`/categories/${category.id}`}>
               <Category imageSrc={category.image} title={category.name} />
             </a>
           </SwiperSlide>

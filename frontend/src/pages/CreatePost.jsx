@@ -46,7 +46,7 @@ const CreatePost = () => {
             headers: {
               "Content-Type": "multipart/form-data",
             },
-          }
+          },
         );
         alert("Producto publicado con éxito");
         navigate(`/productos/${response.data.id}`);

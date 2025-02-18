@@ -1,62 +1,67 @@
-import fs from "fs";
-import path from "path";
+import pool from "../config/db.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-// Correctamente obtenemos la ruta absoluta al archivo JSON
-const filePath = path.resolve("src", "data", "users.json");
+const JWT_SECRET = "fake-jwt";
 
-// Leemos el archivo JSON con la ruta correcta
-let usersRawData = fs.readFileSync(filePath, "utf-8");
-let usersJson = JSON.parse(usersRawData);
-
-// Controllers
-export const login = (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
-  // Buscamos al usuario en el archivo JSON
-  const user = usersJson.users.find(
-    (user) => user.email === email && user.password === password,
-  );
+  try {
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+    const user = result.rows[0];
 
-  if (user) {
+    if (!user) {
+      return res.status(401).json({ message: "Credenciales inválidas" });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: "Credenciales inválidas" });
+    }
+
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
     return res.json({
-      token: "fake-jwt-token",
+      token,
       email: user.email,
       name: user.name,
     });
+  } catch (error) {
+    console.error("Error en login:", error.message);
+    res.status(500).json({ message: "Error del servidor" });
   }
-
-  return res.status(401).json({ message: "Credenciales inválidas" });
 };
 
-export const register = (req, res) => {
-  const { name, lastName, email, password, address, city, state, zip } =
-    req.body;
+export const register = async (req, res) => {
+  const { name, email, password } = req.body;
 
-  // Verificar si el usuario ya existe
-  if (usersJson.users.find((user) => user.email === email)) {
-    return res.status(400).json({ message: "El usuario ya existe" });
+  try {
+    const userExists = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email],
+    );
+
+    if (userExists.rows.length > 0) {
+      return res.status(400).json({ message: "El usuario ya existe" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await pool.query(
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
+      [name, email, hashedPassword],
+    );
+
+    return res
+      .status(201)
+      .json({ message: "Usuario registrado con éxito", email });
+  } catch (error) {
+    console.error("Error en register:", error.message);
+    res.status(500).json({ message: "Error del servidor" });
   }
-
-  // Crear un nuevo usuario
-  const newUser = {
-    id: usersJson.users.length + 1,
-    name,
-    lastName,
-    email,
-    password,
-    address,
-    city,
-    state,
-    zip,
-  };
-
-  // Agregar el nuevo usuario al array de usuarios
-  usersJson.users.push(newUser);
-
-  // Guardar los datos actualizados en el archivo JSON
-  fs.writeFileSync(filePath, JSON.stringify(usersJson, null, 2));
-
-  return res
-    .status(201)
-    .json({ message: "Usuario registrado con éxito", email });
 };

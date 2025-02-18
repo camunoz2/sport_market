@@ -14,7 +14,7 @@ const CategoryNav = () => {
           {data?.categories.map((category) => (
             <a
               key={category.id}
-              href={`/productos?category=${category.name}`} // Ruta con filtro por categoría
+              href={`/categories/${category.id}`}
               className="hover:text-gray-300 cursor-pointer transition-colors"
             >
               {category.name}
@@ -37,7 +37,7 @@ const CategoryNav = () => {
           {data?.categories.map((category) => (
             <a
               key={category.id}
-              href={`/productos?category=${category.name}`} // Ruta con filtro por categoría
+              href={`/categories/${category.id}`}
               className="hover:text-gray-300 cursor-pointer transition-colors"
             >
               {category.name}
