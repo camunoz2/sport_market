@@ -6,5 +6,5 @@
 [functions]
   directory = "frontend/netlify/functions"
 
-[functions."ping-db"]
-  schedule = "@every 10m"
+[functions.ping-db]
+  schedule = "*/10 * * * *"
