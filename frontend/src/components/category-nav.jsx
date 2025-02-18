@@ -34,7 +34,7 @@ const CategoryNav = () => {
       {/* Menú desplegable en móviles */}
       {isOpen && (
         <div className="md:hidden bg-blue-600 text-white flex flex-col items-center py-4 space-y-3">
-          {data.map((category) => (
+          {data?.categories.map((category) => (
             <a
               key={category.id}
               href={`/productos?category=${category.name}`} // Ruta con filtro por categoría

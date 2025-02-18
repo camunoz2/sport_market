@@ -44,6 +44,24 @@ export const postProduct = async (req, res) => {
   }
 };
 
+export const getProductById = async (req, res) => {
+  const productId = req.params.id;
+
+  try {
+    const result = await pool.query("SELECT * FROM products WHERE id = $1", [
+      productId,
+    ]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const getCategories = (req, res) => {
   const baseUrl = isDevelopment ? `${HOST}:${PORT}` : HOST;
   const categoriesWithImages = categories.categories.map((category) => ({
