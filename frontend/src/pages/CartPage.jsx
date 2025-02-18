@@ -1,9 +1,13 @@
 import { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { CartContext } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
+import { formatNumber } from "../utils/formatNumber.js";
 
 export default function CartPage() {
-  const { cart, removeFromCart } = useContext(CartContext);
+  const { cart, addToCart, decreaseQuantity, removeItem } =
+    useContext(CartContext);
+  const { user } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -31,19 +35,21 @@ export default function CartPage() {
         },
         body: JSON.stringify({
           products: cart,
+          userId: user.id,
         }),
       });
       const data = await response.json();
       if (response.ok) {
         window.location.href = data.url;
       } else {
-        console.error("El pago fallo:", data);
+        console.error("El pago falló:", data);
       }
     } catch (error) {
       console.error(error);
     }
   };
-  const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen p-4">
@@ -56,7 +62,7 @@ export default function CartPage() {
           <div className="space-y-4">
             {cart.map((item) => (
               <div
-                key={item.cartId}
+                key={item.id}
                 className="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm"
               >
                 <div className="flex items-center gap-4">
@@ -68,27 +74,44 @@ export default function CartPage() {
                   <div>
                     <h2 className="text-lg font-semibold">{item.title}</h2>
                     <p className="text-gray-500">{item.description}</p>
+                    <p className="text-gray-500">
+                      Precio unitario: ${formatNumber(item.price)}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => decreaseQuantity(item)}
+                      className="bg-gray-300 hover:bg-gray-400 text-black py-1 px-3 rounded"
+                    >
+                      -
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() => addToCart(item)}
+                      className="bg-gray-300 hover:bg-gray-400 text-black py-1 px-3 rounded"
+                    >
+                      +
+                    </button>
+                    <button
+                      onClick={() => removeItem(item)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+
                   <p className="text-lg font-bold text-gray-900">
-                    ${parseFloat(item.price).toFixed(2)}
+                    ${formatNumber(item.price * item.quantity)}
                   </p>
-                  <button
-                    onClick={() => removeFromCart(item)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded"
-                  >
-                    Eliminar
-                  </button>
                 </div>
               </div>
             ))}
 
             <div className="flex justify-between items-center mt-4 p-4 bg-gray-50 rounded-lg">
               <p className="text-xl font-semibold">Total:</p>
-              <p className="text-2xl font-bold text-gray-900">
-                ${total.toFixed(2)}
-              </p>
+              <p className="text-2xl font-bold text-gray-900">${total}</p>
             </div>
 
             <button

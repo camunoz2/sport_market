@@ -8,10 +8,11 @@ const getStoredUser = () => {
   const email = sessionStorage.getItem("email");
   const token = sessionStorage.getItem("jwt");
   const name = sessionStorage.getItem("name");
+  const id = sessionStorage.getItem("id");
 
   if (email && token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    return { email, name };
+    return { email, name, id };
   }
   return null;
 };
@@ -21,38 +22,42 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async (email, password) => {
-    console.log("Login attempt with", email);
-    setIsLoading(true);
     try {
-      const response = await axios.post(
+      setIsLoading(true);
+      const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/login`,
         {
-          email: email,
-          password: password,
-        },
-        {
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-        }
+          body: JSON.stringify({ email, password }),
+        },
       );
+      console.log(response);
 
-      const { token, name, email: userEmail } = response.data; // Rename destructured email
+      if (response.ok) {
+        const data = await response.json();
+        const { token, email: userEmail, name, id } = data;
+        console.log("datar: ", data);
 
-      sessionStorage.setItem("jwt", token);
-      sessionStorage.setItem("email", userEmail);
-      sessionStorage.setItem("name", name);
+        sessionStorage.setItem("jwt", token);
+        sessionStorage.setItem("email", userEmail);
+        sessionStorage.setItem("name", name);
+        sessionStorage.setItem("id", id);
 
-      setUser({ name, email: userEmail });
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        setUser({ name, email: userEmail, id });
 
-      return { success: true, email: userEmail, name: name };
+        return { success: true, email: userEmail, name, id };
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed. Please try again.");
+      }
     } catch (error) {
-      console.error("Login error:", error); // Log the error details
-      const message =
-        error.response?.data?.message || "Login failed. Please try again.";
-      throw new Error(message);
+      console.error("Login error:", error);
+      throw new Error(error.message);
     } finally {
       setIsLoading(false);
     }

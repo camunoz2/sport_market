@@ -7,6 +7,7 @@ import fs from "fs";
 import s3Client from "./aws.js";
 import mime from "mime-types";
 import { Upload } from "@aws-sdk/lib-storage";
+import bcrypt from "bcrypt";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,15 +15,13 @@ const __dirname = path.dirname(__filename);
 const { DATABASE_URL, SEED_FILE, AWS_BUCKET_NAME } = process.env;
 
 if (!DATABASE_URL || !SEED_FILE || !AWS_BUCKET_NAME) {
-  console.error(
-    "DATABASE_URL or SEED_FILE or AWS_BUCKET_NAME environment variable is missing.",
-  );
+  console.error("❌ Missing environment variables.");
   process.exit(1);
 }
 
 async function uploadFileToS3(filePath, fileName) {
   const fileBuffer = await fs.promises.readFile(filePath);
-  const mimeType = mime.lookup(fileName) || "application/octect-stream";
+  const mimeType = mime.lookup(fileName) || "application/octet-stream";
 
   const parallelUpload = new Upload({
     client: s3Client,
@@ -34,53 +33,145 @@ async function uploadFileToS3(filePath, fileName) {
     },
   });
 
-  parallelUpload.on("httpUploadProgress", (progress) => {
-    console.log("Upload progress:", progress);
-  });
-
   const result = await parallelUpload.done();
   return result.Location;
 }
 
 (async () => {
   try {
-    const categoriesPath = path.join(__dirname, "../data/categories.json");
-    const categoriesData = await readFile(categoriesPath, "utf-8");
-    const categories = JSON.parse(categoriesData).categories;
-
+    console.log("🚀 Executing SQL file...");
     const sql = await readFile(SEED_FILE, "utf-8");
-    console.log(`Executing SQL from file: ${SEED_FILE}`);
     await pool.query(sql);
 
-    console.log("Inserting products...");
-    const localImagePath = path.join(__dirname, "../../assets/notfound.png");
+    // 1. First, create categories
+    console.log("📂 Adding categories...");
+    const categories = [
+      {
+        name: "Ropa deportiva",
+        image: "ropa.jpg",
+      },
+      {
+        name: "Articulos",
+        image: "articulos.jpg",
+      },
+      {
+        name: "Zapatillas",
+        image: "zapatillas.jpg",
+      },
+    ];
 
-    for (let i = 1; i <= 10; i++) {
-      const category =
-        categories[Math.floor(Math.random() * categories.length)];
+    const categoryIds = {};
 
-      const uniqueFilename = `${Date.now()}-${i}.png`;
+    for (const category of categories) {
+      const localImagePath = path.join(
+        __dirname,
+        `../../assets/${category.image}`,
+      );
 
-      const s3Url = await uploadFileToS3(localImagePath, uniqueFilename);
+      if (!fs.existsSync(localImagePath)) {
+        console.error(`❌ Image not found: ${localImagePath}`);
+        continue;
+      }
+
+      const s3Url = await uploadFileToS3(localImagePath, category.image);
+      const categoryId = uuidv4();
 
       await pool.query(
-        "INSERT INTO products (id, title, description, price, category, image) VALUES ($1, $2, $3, $4, $5, $6)",
+        "INSERT INTO categories (id, name, image) VALUES ($1, $2, $3)",
+        [categoryId, category.name, s3Url],
+      );
+
+      categoryIds[category.name] = categoryId;
+    }
+
+    // 2. Then, create users
+    console.log("👥 Adding users...");
+    const users = [
+      { name: "Pedro Pascal", email: "test@test.com", password: "1234" },
+      {
+        name: "María González",
+        email: "maria@example.com",
+        password: "123456",
+      },
+    ];
+
+    for (const user of users) {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      await pool.query(
+        `INSERT INTO users (id, name, email, password) 
+         VALUES ($1, $2, $3, $4) 
+         ON CONFLICT (email) DO NOTHING`,
+        [uuidv4(), user.name, user.email, hashedPassword],
+      );
+    }
+
+    // 3. Finally, create products
+    console.log("🛒 Adding products...");
+    const products = [
+      {
+        title: "Camiseta de fútbol",
+        description: "Camiseta oficial del equipo con tecnología transpirable.",
+        price: 29000,
+        category: "Ropa deportiva",
+        image: "camiseta.webp",
+      },
+      {
+        title: "Zapatillas de running",
+        description: "Zapatillas ligeras con suela de amortiguación avanzada.",
+        price: 69900,
+        category: "Zapatillas",
+        image: "zapatilla-running.webp",
+      },
+      {
+        title: "Gorra deportiva",
+        description: "Gorra ajustable ideal para entrenamientos al aire libre.",
+        price: 14000,
+        category: "Articulos",
+        image: "gorra.webp",
+      },
+    ];
+
+    for (const product of products) {
+      const categoryId = categoryIds[product.category] || null;
+      if (!categoryId) {
+        console.warn(
+          `⚠️ No category found for product: ${product.title}. Skipping...`,
+        );
+        continue;
+      }
+
+      const imageFilePath = path.join(
+        __dirname,
+        `../../assets/${product.image}`,
+      );
+
+      if (!fs.existsSync(imageFilePath)) {
+        console.error(`❌ Product image not found: ${imageFilePath}`);
+        continue;
+      }
+
+      const s3Url = await uploadFileToS3(imageFilePath, product.image);
+
+      await pool.query(
+        `INSERT INTO products 
+        (id, title, description, price, category_id, image) 
+        VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           uuidv4(),
-          `Product ${i}`,
-          `Description for product ${i}`,
-          (Math.random() * 100).toFixed(2),
-          category.name,
+          product.title,
+          product.description,
+          product.price,
+          categoryId,
           s3Url,
         ],
       );
     }
 
-    console.log("Database seeded successfully.");
+    console.log("✅ Database seeded successfully.");
   } catch (error) {
-    console.error("Error seeding the database:", error.message);
+    console.error("❌ Error seeding the database:", error.message);
   } finally {
     await pool.end();
-    console.log("Database connection closed.");
+    console.log("🔌 Database connection closed.");
   }
 })();

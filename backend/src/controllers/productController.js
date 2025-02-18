@@ -1,19 +1,28 @@
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 import pool from "../config/db.js";
 import { HOST, PORT } from "../../server.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const rawCategories = fs.readFileSync(
-  path.join(__dirname, "../data/categories.json"),
-  "utf-8",
-);
-const categories = JSON.parse(rawCategories);
+export const getOrders = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT products.id, products.title, products.description, products.price, products.image, orders.quantity, orders.purchase_date
+      FROM orders
+      INNER JOIN products ON orders.product_id = products.id
+      WHERE orders.user_id = $1
+      ORDER BY orders.purchase_date DESC`,
+      [userId],
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error obteniendo las órdenes: ", error);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 export const postProduct = async (req, res) => {
   const { title, description, price, category } = req.body;
@@ -44,6 +53,27 @@ export const postProduct = async (req, res) => {
   }
 };
 
+export const getProductsByCategoryId = async (req, res) => {
+  const categoryId = req.params.id;
+
+  try {
+    const result = await pool.query(
+      `SELECT p.*, c.name AS category_name 
+       FROM products p 
+       JOIN categories c ON p.category_id = c.id 
+       WHERE p.category_id = $1`,
+      [categoryId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: `Error fetcheando los productos: ${error}` });
+  }
+};
+
 export const getProductById = async (req, res) => {
   const productId = req.params.id;
 
@@ -62,13 +92,24 @@ export const getProductById = async (req, res) => {
   }
 };
 
-export const getCategories = (req, res) => {
-  const baseUrl = isDevelopment ? `${HOST}:${PORT}` : HOST;
-  const categoriesWithImages = categories.categories.map((category) => ({
-    ...category,
-    image: `${baseUrl}/assets/${category.image}`,
-  }));
-  res.json({ categories: categoriesWithImages });
+export const getCategories = async (req, res) => {
+  try {
+    const baseUrl = isDevelopment ? `${HOST}:${PORT}` : HOST;
+
+    const { rows: categories } = await pool.query("SELECT * FROM categories");
+
+    const categoriesWithImages = categories.map((category) => ({
+      ...category,
+      image: category.image.includes("http")
+        ? category.image
+        : `${baseUrl}/assets/${category.image}`,
+    }));
+
+    res.json({ categories: categoriesWithImages });
+  } catch (error) {
+    console.error("Error fetching categories:", error.message);
+    res.status(500).json({ error: "Error fetching categories" });
+  }
 };
 
 export const getProducts = async (req, res) => {
