@@ -6,6 +6,5 @@
 [functions]
   directory = "frontend/netlify/functions"
 
-[[functions]]
-  path = "ping-db.js"
-  schedule = "*/10 * * * *"
+[functions."ping-db"]
+  schedule = "@every 10m"
