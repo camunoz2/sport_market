@@ -4,8 +4,8 @@
   status = 200
 
 [functions]
-  directory = "frontend/netlify/functions" # Matches your site settings
+  directory = "frontend/netlify/functions"
 
 [[functions]]
-  path = "ping-db.js" # File inside frontend/netlify/functions/
-  schedule = "*/10 * * * *" # Runs every 10 minutes
+  path = "ping-db.js"
+  schedule = "*/10 * * * *"
