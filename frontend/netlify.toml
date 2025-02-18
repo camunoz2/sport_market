@@ -3,8 +3,5 @@
   to = "/index.html"
   status = 200
 
-[functions]
-  directory = "frontend/netlify/functions"
-
 [functions.ping-db]
   schedule = "*/10 * * * *"
