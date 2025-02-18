@@ -4,6 +4,26 @@ import { HOST, PORT } from "../../server.js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
+export const getOrders = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `SELECT products.id, products.title, products.description, products.price, products.image, orders.quantity, orders.purchase_date
+      FROM orders
+      INNER JOIN products ON orders.product_id = products.id
+      WHERE orders.user_id = $1
+      ORDER BY orders.purchase_date DESC`,
+      [userId],
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error obteniendo las órdenes: ", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const postProduct = async (req, res) => {
   const { title, description, price, category } = req.body;
   const imageUrl = req.file.location;

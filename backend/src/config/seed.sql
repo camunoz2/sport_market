@@ -1,5 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS categories;
@@ -24,5 +25,13 @@ CREATE TABLE products (
   price INTEGER NOT NULL,
   category_id UUID NOT NULL REFERENCES categories(id),
   image VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE orders (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID NOT NULL REFERENCES users(id),
+  product_id UUID NOT NULL REFERENCES products(id),
+  quantity INTEGER NOT NULL,
+  purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

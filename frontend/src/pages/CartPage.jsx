@@ -1,11 +1,13 @@
 import { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { CartContext } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
 import { formatNumber } from "../utils/formatNumber.js";
 
 export default function CartPage() {
   const { cart, addToCart, decreaseQuantity, removeItem } =
     useContext(CartContext);
+  const { user } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -33,13 +35,14 @@ export default function CartPage() {
         },
         body: JSON.stringify({
           products: cart,
+          userId: user.id,
         }),
       });
       const data = await response.json();
       if (response.ok) {
         window.location.href = data.url;
       } else {
-        console.error("El pago fallo:", data);
+        console.error("El pago falló:", data);
       }
     } catch (error) {
       console.error(error);

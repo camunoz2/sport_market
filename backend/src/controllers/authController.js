@@ -28,6 +28,7 @@ export const login = async (req, res) => {
 
     return res.json({
       token,
+      id: user.id,
       email: user.email,
       name: user.name,
     });
@@ -41,6 +42,7 @@ export const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
+    // Check if the user already exists
     const userExists = await pool.query(
       "SELECT * FROM users WHERE email = $1",
       [email],
@@ -50,16 +52,22 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "El usuario ya existe" });
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await pool.query(
-      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3)",
+    // Insert the user and get the new user's id
+    const newUser = await pool.query(
+      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",
       [name, email, hashedPassword],
     );
 
-    return res
-      .status(201)
-      .json({ message: "Usuario registrado con éxito", email });
+    const { id, name: userName, email: userEmail } = newUser.rows[0];
+
+    // Return the user data, including the id
+    return res.status(201).json({
+      message: "Usuario registrado con éxito",
+      user: { id, name: userName, email: userEmail },
+    });
   } catch (error) {
     console.error("Error en register:", error.message);
     res.status(500).json({ message: "Error del servidor" });

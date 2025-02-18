@@ -1,8 +1,9 @@
+import db from "../config/db.js";
 import stripe from "../config/stripe.js";
 
 export const processPayment = async (req, res) => {
   try {
-    const { products } = req.body;
+    const { products, userId } = req.body;
 
     const lineItems = products.map((product) => ({
       price_data: {
@@ -14,7 +15,7 @@ export const processPayment = async (req, res) => {
         },
         unit_amount: Math.round(parseFloat(product.price) * 100),
       },
-      quantity: 1,
+      quantity: product.quantity,
     }));
 
     const session = await stripe.checkout.sessions.create({
@@ -25,9 +26,17 @@ export const processPayment = async (req, res) => {
       cancel_url: `${process.env.FRONTEND_URL}/cart?cancel=true`,
     });
 
+    // Guardar la compra en la base de datos
+    for (const product of products) {
+      await db.query(
+        `INSERT INTO orders (user_id, product_id, quantity) VALUES ($1, $2, $3)`,
+        [userId, product.id, product.quantity],
+      );
+    }
+
     res.json({ url: session.url });
   } catch (error) {
-    console.error("Error creando la sesion de pago: ", error);
+    console.error("Error creando la sesión de pago: ", error);
     res.status(500).json({ error: error.message });
   }
 };
