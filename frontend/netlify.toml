@@ -7,5 +7,5 @@
   directory = "netlify/functions"
 
 [[scheduled_functions]]
-  path = "/.netlify/functions/ping-db"
+  path = "/netlify/functions/ping-db"
   schedule = "*/10 * * * *"
