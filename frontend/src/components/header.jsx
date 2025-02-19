@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
+import { motion } from "framer-motion";
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
@@ -14,72 +15,101 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gray-800 text-white p-4 flex justify-between items-center">
+    <motion.header
+      className="bg-gray-800 text-white p-4"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
-          <a href="/">
-            <img src="/logo.svg" alt="Logo" className="h-8 mr-4" />
-          </a>
-          <nav className="flex gap-4 items-center">
+          {/* Logo */}
+          <motion.a href="/" whileHover={{ scale: 1.1 }}>
+            <img src="/logo.svg" alt="Logo" className="h-10 mr-4" />
+          </motion.a>
+
+          {/* Navegación */}
+          <nav className="flex gap-6 items-center">
             {user ? (
-              <div className="flex text-center flex-col text-white">
-                <span>Hola, {user.name}</span>
-                <a href="/profile" className="font-bold hover:underline">
+              <motion.div
+                className="flex text-center flex-col text-white"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <span className="text-sm">Hola, {user.name}</span>
+                <motion.a
+                  href="/profile"
+                  className="font-bold hover:underline"
+                  whileHover={{ scale: 1.1, color: "#fbbf24" }} // Cambia a amarillo al pasar el cursor
+                >
                   Ingresar al perfil
-                </a>
-              </div>
+                </motion.a>
+              </motion.div>
             ) : (
-              <button
-                className="block md:inline text-white font-bold hover:underline mt-2 md:mt-0 px-3"
+              <motion.button
+                className="text-white font-bold hover:underline px-3"
                 onClick={() => navigate("/registro")}
+                whileHover={{ scale: 1.1, color: "#fbbf24" }}
               >
                 Registrar
-              </button>
+              </motion.button>
             )}
-            <div className="flex items-center">
-              {user ? (
-                <>
-                  <button
-                    className="text-white font-bold hover:underline"
-                    onClick={handleLogout}
-                  >
-                    Cerrar Sesión
-                  </button>
-                  <div
-                    className="relative cursor-pointer hidden md:block"
-                    onClick={() => navigate("/cart")}
-                  >
-                    <img src="/carticon.svg" alt="Carrito" className="h-8" />
-                    <span className="absolute bottom-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-red-100 bg-red-600 rounded-full">
-                      {cart.length}
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <button
+
+            {/* Carrito */}
+            {user ? (
+              <>
+                <motion.button
                   className="text-white font-bold hover:underline"
-                  onClick={() => navigate("/login")}
+                  onClick={handleLogout}
+                  whileHover={{ scale: 1.1, color: "#f87171" }} // Rojo claro al pasar el cursor
                 >
-                  Iniciar Sesión
-                </button>
-              )}
-            </div>
+                  Cerrar Sesión
+                </motion.button>
+
+                <motion.div
+                  className="relative cursor-pointer hidden md:block"
+                  onClick={() => navigate("/cart")}
+                  whileHover={{ scale: 1.2 }}
+                  animate={{ y: [0, -2, 0] }} // Pequeño rebote
+                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                >
+                  <img src="/carticon.svg" alt="Carrito" className="h-8" />
+                  <span className="absolute bottom-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-red-100 bg-red-600 rounded-full">
+                    {cart.length}
+                  </span>
+                </motion.div>
+              </>
+            ) : (
+              <motion.button
+                className="text-white font-bold hover:underline"
+                onClick={() => navigate("/login")}
+                whileHover={{ scale: 1.1, color: "#fbbf24" }}
+              >
+                Iniciar Sesión
+              </motion.button>
+            )}
           </nav>
         </div>
+
         {/* Carrito en móviles */}
         {user && (
-          <div
+          <motion.div
             className="md:hidden fixed bottom-4 right-4 bg-gray-800 p-3 rounded-full shadow-lg cursor-pointer"
             onClick={() => navigate("/cart")}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            whileTap={{ scale: 0.9 }}
           >
             <img src="/carticon.svg" alt="Carrito" className="h-8" />
             <span className="absolute bottom-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-red-100 bg-red-600 rounded-full">
-              3
+              {cart.length}
             </span>
-          </div>
+          </motion.div>
         )}
       </div>
-    </header>
+    </motion.header>
   );
 };
 
