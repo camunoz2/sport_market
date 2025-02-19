@@ -1,5 +1,8 @@
-name: WhatsApp Notification on Commit
-on: [push, issues, pull_request]
+name: WhatsApp Notification on Commit & Issue Mentions
+on: 
+  push:
+  issues:
+    types: [opened, edited, closed]
 
 jobs:
   notify:
@@ -8,18 +11,68 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Extract commit details
+      - name: Extract commit details (for push events)
+        if: github.event_name == 'push'
         id: commit
         run: |
           echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
           echo "COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
 
-      - name: Send WhatsApp message
+      - name: Extract issue details (for opened/edited issues)
+        if: github.event_name == 'issues' && github.event.action != 'closed'
+        id: issue
+        run: |
+          echo "ISSUE_TITLE=${{ github.event.issue.title }}" >> $GITHUB_ENV
+          echo "ISSUE_BODY=${{ github.event.issue.body }}" >> $GITHUB_ENV
+          echo "ISSUE_AUTHOR=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+
+      - name: Find mentions in issue body
+        if: github.event_name == 'issues' && github.event.action != 'closed'
+        run: |
+          MENTIONED_USERS=$(echo "${{ env.ISSUE_BODY }}" | grep -o '@[a-zA-Z0-9_-]*' | tr '\n' ' ')
+          echo "MENTIONED_USERS=$MENTIONED_USERS" >> $GITHUB_ENV
+
+      - name: Extract closed issue details
+        if: github.event_name == 'issues' && github.event.action == 'closed'
+        run: |
+          echo "ISSUE_TITLE=${{ github.event.issue.title }}" >> $GITHUB_ENV
+          echo "ISSUE_AUTHOR=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+
+      - name: Send WhatsApp message (for commits)
+        if: github.event_name == 'push'
         run: |
           curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
           --data-urlencode "To=whatsapp:$USER_PHONE_NUMBER" \
           --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
           --data-urlencode "Body=New commit by ${{ env.COMMIT_AUTHOR }}: ${{ env.COMMIT_MESSAGE }}" \
+          -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+        env:
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
+          USER_PHONE_NUMBER: ${{ secrets.USER_PHONE_NUMBER }}
+
+      - name: Send WhatsApp message (for issue mentions)
+        if: github.event_name == 'issues' && github.event.action != 'closed' && env.MENTIONED_USERS != ''
+        run: |
+          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
+          --data-urlencode "To=whatsapp:$USER_PHONE_NUMBER" \
+          --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
+          --data-urlencode "Body=Issue '${{ env.ISSUE_TITLE }}' by ${{ env.ISSUE_AUTHOR }} mentions: ${{ env.MENTIONED_USERS }}" \
+          -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+        env:
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
+          USER_PHONE_NUMBER: ${{ secrets.USER_PHONE_NUMBER }}
+
+      - name: Send WhatsApp message (for closed issues)
+        if: github.event_name == 'issues' && github.event.action == 'closed'
+        run: |
+          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
+          --data-urlencode "To=whatsapp:$USER_PHONE_NUMBER" \
+          --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
+          --data-urlencode "Body=Issue '${{ env.ISSUE_TITLE }}' was closed by ${{ env.ISSUE_AUTHOR }}" \
           -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
