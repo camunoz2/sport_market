@@ -55,32 +55,38 @@ jobs:
           
           case "$EVENT_TYPE" in
             "Commit")
-              MESSAGE="📌 *New Commit*👤 Author: $COMMIT_AUTHOR  💬 Message: $COMMIT_MESSAGE"
+              MESSAGE="📌 *New Commit*\n👤 Author: $COMMIT_AUTHOR\n💬 Message: $COMMIT_MESSAGE"
               ;;
             "Pull Request")
-              MESSAGE="🔀 *Pull Request*   👤 Author: $PR_AUTHOR   📄 Title: $PR_TITLE   📢 Action: $PR_ACTION"
+              MESSAGE="🔀 *Pull Request*\n👤 Author: $PR_AUTHOR\n📄 Title: $PR_TITLE\n📢 Action: $PR_ACTION"
               ;;
             "Issue")
-              MESSAGE="🐛 *Issue*   👤 Author: $ISSUE_AUTHOR   📄 Title: $ISSUE_TITLE   📢 Action: $ISSUE_ACTION"
+              MESSAGE="🐛 *Issue*\n👤 Author: $ISSUE_AUTHOR\n📄 Title: $ISSUE_TITLE\n📢 Action: $ISSUE_ACTION"
               ;;
             "Mention")
               if [ -n "$MENTIONED_USER" ]; then
-                MESSAGE="📣 *Mention in Issue*   👤 $COMMENT_AUTHOR mentioned @$MENTIONED_USER in a comment."
+                MESSAGE="📣 *Mention in Issue*\n👤 $COMMENT_AUTHOR mentioned @$MENTIONED_USER in a comment."
               fi
               ;;
           esac
 
           echo "MESSAGE=$MESSAGE" >> $GITHUB_ENV
 
-      - name: Send WhatsApp Notification
+      - name: Send WhatsApp Notification to Multiple Numbers
         run: |
-          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
-          --data-urlencode "To=whatsapp:$USER_PHONE_NUMBER" \
-          --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
-          --data-urlencode "Body=$MESSAGE" \
-          -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+          NUMBERS="${{ secrets.SANDBOX_NUMBERS }}"
+          IFS=',' read -ra PHONE_NUMBERS <<< "$NUMBERS"
+
+          for NUMBER in "${PHONE_NUMBERS[@]}"; do
+            echo "Sending message to $NUMBER..."
+            curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
+            --data-urlencode "To=whatsapp:$NUMBER" \
+            --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
+            --data-urlencode "Body=$MESSAGE" \
+            -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+          done
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
-          USER_PHONE_NUMBER: ${{ secrets.USER_PHONE_NUMBER }}
+          SANDBOX_NUMBERS: ${{ secrets.SANDBOX_NUMBERS }}
