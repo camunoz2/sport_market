@@ -1,8 +1,13 @@
-name: WhatsApp Notification on Commit & Issue Mentions
-on: 
+name: WhatsApp Notifications
+
+on:
   push:
+  pull_request:
+    types: [opened, closed]
   issues:
-    types: [opened, edited, closed]
+    types: [opened, closed]
+  issue_comment:
+    types: [created]
 
 jobs:
   notify:
@@ -11,68 +16,68 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Extract commit details (for push events)
+      - name: Extract Commit Details (if push)
         if: github.event_name == 'push'
-        id: commit
         run: |
+          echo "EVENT_TYPE=Commit" >> $GITHUB_ENV
           echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
           echo "COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an')" >> $GITHUB_ENV
 
-      - name: Extract issue details (for opened/edited issues)
-        if: github.event_name == 'issues' && github.event.action != 'closed'
-        id: issue
+      - name: Extract PR Details (if PR)
+        if: github.event_name == 'pull_request'
         run: |
-          echo "ISSUE_TITLE=${{ github.event.issue.title }}" >> $GITHUB_ENV
-          echo "ISSUE_BODY=${{ github.event.issue.body }}" >> $GITHUB_ENV
-          echo "ISSUE_AUTHOR=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+          echo "EVENT_TYPE=Pull Request" >> $GITHUB_ENV
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "PR_AUTHOR=${{ github.event.pull_request.user.login }}" >> $GITHUB_ENV
+          echo "PR_ACTION=${{ github.event.action }}" >> $GITHUB_ENV
 
-      - name: Find mentions in issue body
-        if: github.event_name == 'issues' && github.event.action != 'closed'
+      - name: Extract Issue Details (if issue)
+        if: github.event_name == 'issues'
         run: |
-          MENTIONED_USERS=$(echo "${{ env.ISSUE_BODY }}" | grep -o '@[a-zA-Z0-9_-]*' | tr '\n' ' ')
-          echo "MENTIONED_USERS=$MENTIONED_USERS" >> $GITHUB_ENV
-
-      - name: Extract closed issue details
-        if: github.event_name == 'issues' && github.event.action == 'closed'
-        run: |
+          echo "EVENT_TYPE=Issue" >> $GITHUB_ENV
           echo "ISSUE_TITLE=${{ github.event.issue.title }}" >> $GITHUB_ENV
           echo "ISSUE_AUTHOR=${{ github.event.issue.user.login }}" >> $GITHUB_ENV
+          echo "ISSUE_ACTION=${{ github.event.action }}" >> $GITHUB_ENV
 
-      - name: Send WhatsApp message (for commits)
-        if: github.event_name == 'push'
+      - name: Extract Mentioned User from Comment (if issue comment)
+        if: github.event_name == 'issue_comment'
+        run: |
+          COMMENT_BODY="${{ github.event.comment.body }}"
+          MENTIONED_USER=$(echo "$COMMENT_BODY" | grep -o '@[a-zA-Z0-9_-]*' | head -n 1 | tr -d '@')
+
+          echo "EVENT_TYPE=Mention" >> $GITHUB_ENV
+          echo "COMMENT_AUTHOR=${{ github.event.comment.user.login }}" >> $GITHUB_ENV
+          echo "MENTIONED_USER=$MENTIONED_USER" >> $GITHUB_ENV
+
+      - name: Construct WhatsApp Message
+        run: |
+          MESSAGE="Unknown event"
+          
+          case "$EVENT_TYPE" in
+            "Commit")
+              MESSAGE="📌 *New Commit*\n👤 Author: $COMMIT_AUTHOR\n💬 Message: $COMMIT_MESSAGE"
+              ;;
+            "Pull Request")
+              MESSAGE="🔀 *Pull Request*\n👤 Author: $PR_AUTHOR\n📄 Title: $PR_TITLE\n📢 Action: $PR_ACTION"
+              ;;
+            "Issue")
+              MESSAGE="🐛 *Issue*\n👤 Author: $ISSUE_AUTHOR\n📄 Title: $ISSUE_TITLE\n📢 Action: $ISSUE_ACTION"
+              ;;
+            "Mention")
+              if [ -n "$MENTIONED_USER" ]; then
+                MESSAGE="📣 *Mention in Issue*\n👤 $COMMENT_AUTHOR mentioned @$MENTIONED_USER in a comment."
+              fi
+              ;;
+          esac
+
+          echo "MESSAGE=$MESSAGE" >> $GITHUB_ENV
+
+      - name: Send WhatsApp Notification
         run: |
           curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
           --data-urlencode "To=whatsapp:$USER_PHONE_NUMBER" \
           --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
-          --data-urlencode "Body=New commit by ${{ env.COMMIT_AUTHOR }}: ${{ env.COMMIT_MESSAGE }}" \
-          -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
-        env:
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
-          USER_PHONE_NUMBER: ${{ secrets.USER_PHONE_NUMBER }}
-
-      - name: Send WhatsApp message (for issue mentions)
-        if: github.event_name == 'issues' && github.event.action != 'closed' && env.MENTIONED_USERS != ''
-        run: |
-          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
-          --data-urlencode "To=whatsapp:$USER_PHONE_NUMBER" \
-          --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
-          --data-urlencode "Body=Issue '${{ env.ISSUE_TITLE }}' by ${{ env.ISSUE_AUTHOR }} mentions: ${{ env.MENTIONED_USERS }}" \
-          -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
-        env:
-          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
-          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
-          TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
-          USER_PHONE_NUMBER: ${{ secrets.USER_PHONE_NUMBER }}
-
-      - name: Send WhatsApp message (for closed issues)
-        if: github.event_name == 'issues' && github.event.action == 'closed'
-        run: |
-          curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
-          --data-urlencode "To=whatsapp:$USER_PHONE_NUMBER" \
-          --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
-          --data-urlencode "Body=Issue '${{ env.ISSUE_TITLE }}' was closed by ${{ env.ISSUE_AUTHOR }}" \
+          --data-urlencode "Body=$MESSAGE" \
           -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
