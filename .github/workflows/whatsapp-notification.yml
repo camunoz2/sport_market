@@ -86,19 +86,21 @@ jobs:
         run: echo "Formatted Message: $MESSAGE"
 
       - name: Send WhatsApp Notification to Multiple Numbers
+        shell: bash
         run: |
           NUMBERS="${{ secrets.SANDBOX_NUMBERS }}"
           echo "Numbers: $NUMBERS"
 
-          IFS=',' read -r -a PHONE_NUMBERS <<< "$NUMBERS"  # Split numbers by comma
-          
-          for NUMBER in "${PHONE_NUMBERS[@]}"; do
-            echo "Sending message to $NUMBER..."
-            curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
-            --data-urlencode "To=whatsapp:$NUMBER" \
-            --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
-            --data-urlencode "Body=$MESSAGE" \
-            -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+          # Fix: Use a while loop instead of <<< (not supported in sh)
+          echo "$NUMBERS" | tr ',' '\n' | while read -r NUMBER; do
+            if [ -n "$NUMBER" ]; then
+              echo "Sending message to $NUMBER..."
+              curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
+              --data-urlencode "To=whatsapp:$NUMBER" \
+              --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
+              --data-urlencode "Body=$MESSAGE" \
+              -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+            fi
           done
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
