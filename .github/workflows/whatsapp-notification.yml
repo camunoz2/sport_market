@@ -105,10 +105,8 @@ jobs:
           MENTIONED_USER: ${{ env.MENTIONED_USER }}
 
       - name: Debug Message Format
-        shell: bash
-        run: echo "Formatted Message: $MESSAGE"
-        env:
-          MESSAGE: ${{ env.MESSAGE }}
+        run: |
+          echo "Formatted Message: ${{ env.MESSAGE }}"
 
       - name: Send WhatsApp Notification to Multiple Numbers
         shell: bash
