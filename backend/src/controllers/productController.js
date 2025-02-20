@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import pool from "../config/db.js";
 import { HOST, PORT } from "../../server.js";
+import testDBConnection from "../helpers/testDBConnection.js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -109,6 +110,52 @@ export const getCategories = async (req, res) => {
   } catch (error) {
     console.error("Error fetching categories:", error.message);
     res.status(500).json({ error: "Error fetching categories" });
+  }
+};
+
+export const getUserByProductId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = `
+      SELECT users.id, users.name, users.email 
+      FROM users 
+      JOIN products ON users.id = products.user_id 
+      WHERE products.id = $1
+    `;
+    const { rows } = await pool.query(query, [id]);
+
+    if (rows.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "User not found for this product" });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const testDB = async (req, res) => {
+  try {
+    await testDBConnection();
+    res.status(200).json({ message: "Database connection successful" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Database connection failed", error: error.message });
+  }
+};
+
+export const getProductsByUserId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const query = `SELECT * FROM products WHERE user_id = $1`;
+    const { rows } = await pool.query(query, [id]);
+
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 

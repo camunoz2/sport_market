@@ -43,21 +43,11 @@ async function uploadFileToS3(filePath, fileName) {
     const sql = await readFile(SEED_FILE, "utf-8");
     await pool.query(sql);
 
-    // 1. First, create categories
     console.log("📂 Adding categories...");
     const categories = [
-      {
-        name: "Ropa deportiva",
-        image: "ropa.jpg",
-      },
-      {
-        name: "Articulos",
-        image: "articulos.jpg",
-      },
-      {
-        name: "Zapatillas",
-        image: "zapatillas.jpg",
-      },
+      { name: "Ropa deportiva", image: "ropa.jpg" },
+      { name: "Articulos", image: "articulos.jpg" },
+      { name: "Zapatillas", image: "zapatillas.jpg" },
     ];
 
     const categoryIds = {};
@@ -67,24 +57,19 @@ async function uploadFileToS3(filePath, fileName) {
         __dirname,
         `../../assets/${category.image}`,
       );
-
       if (!fs.existsSync(localImagePath)) {
         console.error(`❌ Image not found: ${localImagePath}`);
         continue;
       }
-
       const s3Url = await uploadFileToS3(localImagePath, category.image);
       const categoryId = uuidv4();
-
       await pool.query(
         "INSERT INTO categories (id, name, image) VALUES ($1, $2, $3)",
         [categoryId, category.name, s3Url],
       );
-
       categoryIds[category.name] = categoryId;
     }
 
-    // 2. Then, create users
     console.log("👥 Adding users...");
     const users = [
       { name: "Pedro Pascal", email: "test@test.com", password: "1234" },
@@ -95,47 +80,52 @@ async function uploadFileToS3(filePath, fileName) {
       },
     ];
 
+    const userIds = {};
+
     for (const user of users) {
+      const userId = uuidv4();
       const hashedPassword = await bcrypt.hash(user.password, 10);
       await pool.query(
-        `INSERT INTO users (id, name, email, password) 
-         VALUES ($1, $2, $3, $4) 
-         ON CONFLICT (email) DO NOTHING`,
-        [uuidv4(), user.name, user.email, hashedPassword],
+        `INSERT INTO users (id, name, email, password) VALUES ($1, $2, $3, $4) ON CONFLICT (email) DO NOTHING`,
+        [userId, user.name, user.email, hashedPassword],
       );
+      userIds[user.email] = userId;
     }
 
-    // 3. Finally, create products
     console.log("🛒 Adding products...");
     const products = [
       {
         title: "Camiseta de fútbol",
-        description: "Camiseta oficial del equipo con tecnología transpirable.",
+        description: "Camiseta oficial con tecnología transpirable.",
         price: 29000,
         category: "Ropa deportiva",
         image: "camiseta.webp",
+        userEmail: "test@test.com",
       },
       {
         title: "Zapatillas de running",
-        description: "Zapatillas ligeras con suela de amortiguación avanzada.",
+        description: "Zapatillas ligeras con suela avanzada.",
         price: 69900,
         category: "Zapatillas",
         image: "zapatilla-running.webp",
+        userEmail: "maria@example.com",
       },
       {
         title: "Gorra deportiva",
-        description: "Gorra ajustable ideal para entrenamientos al aire libre.",
+        description: "Gorra ajustable ideal para entrenamientos.",
         price: 14000,
         category: "Articulos",
         image: "gorra.webp",
+        userEmail: "test@test.com",
       },
     ];
 
     for (const product of products) {
       const categoryId = categoryIds[product.category] || null;
-      if (!categoryId) {
+      const userId = userIds[product.userEmail] || null;
+      if (!categoryId || !userId) {
         console.warn(
-          `⚠️ No category found for product: ${product.title}. Skipping...`,
+          `⚠️ Missing category or user for product: ${product.title}. Skipping...`,
         );
         continue;
       }
@@ -144,24 +134,21 @@ async function uploadFileToS3(filePath, fileName) {
         __dirname,
         `../../assets/${product.image}`,
       );
-
       if (!fs.existsSync(imageFilePath)) {
         console.error(`❌ Product image not found: ${imageFilePath}`);
         continue;
       }
 
       const s3Url = await uploadFileToS3(imageFilePath, product.image);
-
       await pool.query(
-        `INSERT INTO products 
-        (id, title, description, price, category_id, image) 
-        VALUES ($1, $2, $3, $4, $5, $6)`,
+        `INSERT INTO products (id, title, description, price, category_id, user_id, image) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
         [
           uuidv4(),
           product.title,
           product.description,
           product.price,
           categoryId,
+          userId,
           s3Url,
         ],
       );

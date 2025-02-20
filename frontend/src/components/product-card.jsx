@@ -3,9 +3,12 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router";
 import { useContext } from "react";
 import { formatNumber } from "../utils/formatNumber.js";
+import useUserByProductId from "../hooks/useUserByProductId.js";
 
 const ProductCard = ({ product, addToCart }) => {
   const { user } = useContext(AuthContext);
+  const { user: publisher, isLoading } = useUserByProductId(product.id);
+  console.log(publisher);
   const navigate = useNavigate();
 
   const handleAddToCart = () => {
@@ -35,6 +38,19 @@ const ProductCard = ({ product, addToCart }) => {
           {formatNumber(product.price)}
           <span className="text-sm font-light">clp</span>
         </h3>
+        {isLoading ? (
+          <div>cargando...</div>
+        ) : (
+          <p className="py-3">
+            Producto publicado por{" "}
+            <a
+              className="px-1 py-1 bg-teal-200 rounded-xs"
+              href={`mailto:${publisher.email}`}
+            >
+              {publisher.email}
+            </a>
+          </p>
+        )}
 
         <div className="mt-auto flex gap-2">
           <button

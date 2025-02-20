@@ -16,12 +16,36 @@ export async function getCategories() {
   return await response.json();
 }
 
+export async function getProductsByUserId(id) {
+  if (!id) {
+    throw new Error("Se debe proporcionar un id para la categoria");
+  }
+  const response = await fetch(`${BASE_URL}/api/users/${id}/products`);
+  if (!response.ok) {
+    throw new Error("No se puedieron fetchear los productos por el id");
+  }
+  return await response.json();
+}
+
+export async function getUserByProductId(id) {
+  if (!id) {
+    throw new Error("Necesitas proporcionar un id");
+  }
+  const response = await fetch(`${BASE_URL}/api/products/${id}/user`);
+  if (!response.ok) {
+    throw new Error(
+      "No se pudo fetchear el usuario con el id seleccionado del producto",
+    );
+  }
+  return await response.json();
+}
+
 export async function getCategoryAndProductsById(id) {
   if (!id) {
     throw new Error("Se debe proporcionar un id para la categoria");
   }
 
-  const response = await fetch(`http://localhost:5454/api/categories/${id}`);
+  const response = await fetch(`${BASE_URL}/api/categories/${id}`);
   if (!response.ok) {
     throw new Error("No se pudo obtener la categoría y productos");
   }

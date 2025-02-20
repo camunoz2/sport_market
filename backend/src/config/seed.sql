@@ -24,13 +24,14 @@ CREATE TABLE products (
   description TEXT NOT NULL,
   price INTEGER NOT NULL,
   category_id UUID NOT NULL REFERENCES categories(id),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Added user_id to link products to users
   image VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE orders (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID NOT NULL REFERENCES users(id),
-  product_id UUID NOT NULL REFERENCES products(id),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
   quantity INTEGER NOT NULL,
   purchase_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

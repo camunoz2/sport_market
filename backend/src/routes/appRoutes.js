@@ -7,8 +7,10 @@ import {
   getProductById,
   getProductsByCategoryId,
   getOrders,
+  getUserByProductId,
+  getProductsByUserId,
+  testDB,
 } from "../controllers/productController.js";
-import testDBConnection from "../helpers/testDBConnection.js";
 import upload from "../config/uploadConfig.js";
 import { processPayment } from "../controllers/paymenController.js";
 
@@ -21,17 +23,10 @@ router.get("/categories", getCategories);
 router.get("/categories/:id", getProductsByCategoryId);
 router.get("/products", getProducts);
 router.get("/products/:id", getProductById);
+router.get("/products/:id/user", getUserByProductId);
+router.get("/users/:id/products", getProductsByUserId);
 router.post("/pay", processPayment);
 router.get("/orders/:userId", getOrders);
-router.get("/test-db", async (req, res) => {
-  try {
-    await testDBConnection();
-    res.status(200).json({ message: "Database connection successful" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Database connection failed", error: error.message });
-  }
-});
+router.get("/test-db", testDB);
 
 export default router;
