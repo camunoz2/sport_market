@@ -3,7 +3,7 @@ import { getUserByProductId } from "../api/queries";
 
 export default function useUserByProductId(id) {
   const query = useQuery({
-    queryKey: ["user"],
+    queryKey: ["user", id],
     queryFn: () => getUserByProductId(id),
   });
 

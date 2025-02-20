@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router";
+import useProductsByUserId from "../hooks/useProductsByUserId";
 
 export const Profile = () => {
   const { user, logout } = useContext(AuthContext);
+  const { products, isLoading } = useProductsByUserId(user.id);
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
@@ -105,6 +107,29 @@ export const Profile = () => {
         )}
       </div>
 
+      {/* Products Section */}
+      <div className="w-full border-t border-gray-300 my-5"></div>
+      <div className="w-full">
+        <h2 className="text-2xl font-medium mb-3 text-center md:text-left">
+          Tus Productos
+        </h2>
+        {isLoading ? (
+          <p>Cargando productos...</p>
+        ) : (
+          <ul className="space-y-4">
+            {products?.map((product) => (
+              <li key={product.id} className="p-4 border rounded shadow-sm">
+                <p>
+                  <strong>Producto:</strong> {product.title}
+                </p>
+                <p>
+                  <strong>Precio:</strong> {product.price}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
       {/* Action Buttons */}
       <div className="w-full border-t border-gray-300 my-5"></div>
       <div className="flex flex-wrap justify-center gap-4 mt-5 w-full">
