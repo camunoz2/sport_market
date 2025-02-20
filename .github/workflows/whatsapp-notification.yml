@@ -47,7 +47,6 @@ jobs:
         run: |
           COMMENT_BODY="${{ github.event.comment.body }}"
           MENTIONED_USER=$(echo "$COMMENT_BODY" | grep -o '@[a-zA-Z0-9_-]*' | head -n 1 | tr -d '@')
-
           echo "EVENT_TYPE=Mention" >> $GITHUB_ENV
           echo "COMMENT_AUTHOR=${{ github.event.comment.user.login }}" >> $GITHUB_ENV
           echo "MENTIONED_USER=$MENTIONED_USER" >> $GITHUB_ENV
@@ -65,11 +64,22 @@ jobs:
           echo "ISSUE_ACTION=$ISSUE_ACTION"
           echo "COMMENT_AUTHOR=$COMMENT_AUTHOR"
           echo "MENTIONED_USER=$MENTIONED_USER"
+        env:
+          EVENT_TYPE: ${{ env.EVENT_TYPE }}
+          COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}
+          COMMIT_AUTHOR: ${{ env.COMMIT_AUTHOR }}
+          PR_TITLE: ${{ env.PR_TITLE }}
+          PR_AUTHOR: ${{ env.PR_AUTHOR }}
+          PR_ACTION: ${{ env.PR_ACTION }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_AUTHOR: ${{ env.ISSUE_AUTHOR }}
+          ISSUE_ACTION: ${{ env.ISSUE_ACTION }}
+          COMMENT_AUTHOR: ${{ env.COMMENT_AUTHOR }}
+          MENTIONED_USER: ${{ env.MENTIONED_USER }}
 
       - name: Construct WhatsApp Message
         run: |
           MESSAGE="Unknown event"
-
           if [ "$EVENT_TYPE" = "Commit" ]; then
             MESSAGE="📌 *New Commit*|👤 Author: $COMMIT_AUTHOR|💬 Message: $COMMIT_MESSAGE"
           elif [ "$EVENT_TYPE" = "Pull Request" ]; then
@@ -79,19 +89,33 @@ jobs:
           elif [ "$EVENT_TYPE" = "Mention" ] && [ -n "$MENTIONED_USER" ]; then
             MESSAGE="📣 *Mention in Issue*|👤 $COMMENT_AUTHOR mentioned @$MENTIONED_USER in a comment."
           fi
-
           echo "MESSAGE=$MESSAGE" >> $GITHUB_ENV
+          echo "Constructed MESSAGE: $MESSAGE"
+        env:
+          EVENT_TYPE: ${{ env.EVENT_TYPE }}
+          COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}
+          COMMIT_AUTHOR: ${{ env.COMMIT_AUTHOR }}
+          PR_TITLE: ${{ env.PR_TITLE }}
+          PR_AUTHOR: ${{ env.PR_AUTHOR }}
+          PR_ACTION: ${{ env.PR_ACTION }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_AUTHOR: ${{ env.ISSUE_AUTHOR }}
+          ISSUE_ACTION: ${{ env.ISSUE_ACTION }}
+          COMMENT_AUTHOR: ${{ env.COMMENT_AUTHOR }}
+          MENTIONED_USER: ${{ env.MENTIONED_USER }}
 
       - name: Debug Message Format
+        shell: bash
         run: echo "Formatted Message: $MESSAGE"
+        env:
+          MESSAGE: ${{ env.MESSAGE }}
 
       - name: Send WhatsApp Notification to Multiple Numbers
         shell: bash
         run: |
           NUMBERS="${{ secrets.SANDBOX_NUMBERS }}"
           echo "Numbers: $NUMBERS"
-
-          # Fix: Use a while loop instead of <<< (not supported in sh)
+          # Process numbers separated by comma and send the message to each
           echo "$NUMBERS" | tr ',' '\n' | while read -r NUMBER; do
             if [ -n "$NUMBER" ]; then
               echo "Sending message to $NUMBER..."
@@ -107,3 +131,4 @@ jobs:
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
           SANDBOX_NUMBERS: ${{ secrets.SANDBOX_NUMBERS }}
+          MESSAGE: ${{ env.MESSAGE }}
