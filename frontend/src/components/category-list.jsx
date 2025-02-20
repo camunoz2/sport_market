@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import Category from "./category";
 import useCategories from "../hooks/useCategories";
+import { Link } from "react-router";
 
 const CategoryList = () => {
   const { data } = useCategories();
@@ -19,9 +20,16 @@ const CategoryList = () => {
       >
         {data?.categories.concat(data?.categories).map((category, index) => (
           <div key={index} className="w-[300px] h-[180px] flex-shrink-0">
-            <a href={`/categories/${category.id}`} className="block w-full h-full">
-              <Category imageSrc={category.image} title={category.name} className="w-full h-full object-cover rounded-lg shadow-md" />
-            </a>
+            <Link
+              to={`/categories/${category.id}`}
+              className="block w-full h-full"
+            >
+              <Category
+                imageSrc={category.image}
+                title={category.name}
+                className="w-full h-full object-cover rounded-lg shadow-md"
+              />
+            </Link>
           </div>
         ))}
       </motion.div>
