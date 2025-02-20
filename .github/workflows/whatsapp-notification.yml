@@ -122,7 +122,7 @@ jobs:
               --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
               --data-urlencode "Body=$MESSAGE" \
               -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
-              sleep(4)
+              sleep 4
             fi
           done
         env:
