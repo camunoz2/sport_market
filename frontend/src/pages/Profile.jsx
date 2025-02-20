@@ -1,7 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+//<<<<<<< 157-feat-productos-home-mostrar-usuario
 import { useNavigate } from "react-router";
 import useProductsByUserId from "../hooks/useProductsByUserId";
+
+import { useNavigate, Link } from "react-router";
+//>>>>>>> main
 
 export const Profile = () => {
   const { user, logout } = useContext(AuthContext);
@@ -66,9 +70,9 @@ export const Profile = () => {
         </p>
         <p className="text-lg text-center md:text-left">
           <strong>Email: </strong>
-          <a href={`mailto:${user.email}`} className="text-gray-500">
+          <Link to={`mailto:${user.email}`} className="text-gray-500">
             {user.email}
-          </a>
+          </Link>
         </p>
       </div>
 

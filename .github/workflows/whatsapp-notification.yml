@@ -16,6 +16,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Debug GitHub Event
+        run: echo "Event name is ${{ github.event_name }}"
+
       - name: Extract Commit Details (if push)
         if: github.event_name == 'push'
         run: |
@@ -44,49 +47,87 @@ jobs:
         run: |
           COMMENT_BODY="${{ github.event.comment.body }}"
           MENTIONED_USER=$(echo "$COMMENT_BODY" | grep -o '@[a-zA-Z0-9_-]*' | head -n 1 | tr -d '@')
-
           echo "EVENT_TYPE=Mention" >> $GITHUB_ENV
           echo "COMMENT_AUTHOR=${{ github.event.comment.user.login }}" >> $GITHUB_ENV
           echo "MENTIONED_USER=$MENTIONED_USER" >> $GITHUB_ENV
 
+      - name: Debug Environment Variables
+        run: |
+          echo "EVENT_TYPE=$EVENT_TYPE"
+          echo "COMMIT_MESSAGE=$COMMIT_MESSAGE"
+          echo "COMMIT_AUTHOR=$COMMIT_AUTHOR"
+          echo "PR_TITLE=$PR_TITLE"
+          echo "PR_AUTHOR=$PR_AUTHOR"
+          echo "PR_ACTION=$PR_ACTION"
+          echo "ISSUE_TITLE=$ISSUE_TITLE"
+          echo "ISSUE_AUTHOR=$ISSUE_AUTHOR"
+          echo "ISSUE_ACTION=$ISSUE_ACTION"
+          echo "COMMENT_AUTHOR=$COMMENT_AUTHOR"
+          echo "MENTIONED_USER=$MENTIONED_USER"
+        env:
+          EVENT_TYPE: ${{ env.EVENT_TYPE }}
+          COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}
+          COMMIT_AUTHOR: ${{ env.COMMIT_AUTHOR }}
+          PR_TITLE: ${{ env.PR_TITLE }}
+          PR_AUTHOR: ${{ env.PR_AUTHOR }}
+          PR_ACTION: ${{ env.PR_ACTION }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_AUTHOR: ${{ env.ISSUE_AUTHOR }}
+          ISSUE_ACTION: ${{ env.ISSUE_ACTION }}
+          COMMENT_AUTHOR: ${{ env.COMMENT_AUTHOR }}
+          MENTIONED_USER: ${{ env.MENTIONED_USER }}
+
       - name: Construct WhatsApp Message
         run: |
           MESSAGE="Unknown event"
-          
-          case "$EVENT_TYPE" in
-            "Commit")
-              MESSAGE="📌 *New Commit*\n👤 Author: $COMMIT_AUTHOR\n💬 Message: $COMMIT_MESSAGE"
-              ;;
-            "Pull Request")
-              MESSAGE="🔀 *Pull Request*\n👤 Author: $PR_AUTHOR\n📄 Title: $PR_TITLE\n📢 Action: $PR_ACTION"
-              ;;
-            "Issue")
-              MESSAGE="🐛 *Issue*\n👤 Author: $ISSUE_AUTHOR\n📄 Title: $ISSUE_TITLE\n📢 Action: $ISSUE_ACTION"
-              ;;
-            "Mention")
-              if [ -n "$MENTIONED_USER" ]; then
-                MESSAGE="📣 *Mention in Issue*\n👤 $COMMENT_AUTHOR mentioned @$MENTIONED_USER in a comment."
-              fi
-              ;;
-          esac
-
+          if [ "$EVENT_TYPE" = "Commit" ]; then
+            MESSAGE="📌 *New Commit*|👤 Author: $COMMIT_AUTHOR|💬 Message: $COMMIT_MESSAGE"
+          elif [ "$EVENT_TYPE" = "Pull Request" ]; then
+            MESSAGE="🔀 *Pull Request*|👤 Author: $PR_AUTHOR|📄 Title: $PR_TITLE|📢 Action: $PR_ACTION"
+          elif [ "$EVENT_TYPE" = "Issue" ]; then
+            MESSAGE="🐛 *Issue*|👤 Author: $ISSUE_AUTHOR|📄 Title: $ISSUE_TITLE|📢 Action: $ISSUE_ACTION"
+          elif [ "$EVENT_TYPE" = "Mention" ] && [ -n "$MENTIONED_USER" ]; then
+            MESSAGE="📣 *Mention in Issue*|👤 $COMMENT_AUTHOR mentioned @$MENTIONED_USER in a comment."
+          fi
           echo "MESSAGE=$MESSAGE" >> $GITHUB_ENV
+          echo "Constructed MESSAGE: $MESSAGE"
+        env:
+          EVENT_TYPE: ${{ env.EVENT_TYPE }}
+          COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}
+          COMMIT_AUTHOR: ${{ env.COMMIT_AUTHOR }}
+          PR_TITLE: ${{ env.PR_TITLE }}
+          PR_AUTHOR: ${{ env.PR_AUTHOR }}
+          PR_ACTION: ${{ env.PR_ACTION }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_AUTHOR: ${{ env.ISSUE_AUTHOR }}
+          ISSUE_ACTION: ${{ env.ISSUE_ACTION }}
+          COMMENT_AUTHOR: ${{ env.COMMENT_AUTHOR }}
+          MENTIONED_USER: ${{ env.MENTIONED_USER }}
+
+      - name: Debug Message Format
+        run: |
+          echo "Formatted Message: ${{ env.MESSAGE }}"
 
       - name: Send WhatsApp Notification to Multiple Numbers
+        shell: bash
         run: |
           NUMBERS="${{ secrets.SANDBOX_NUMBERS }}"
-          IFS=',' read -ra PHONE_NUMBERS <<< "$NUMBERS"
-
-          for NUMBER in "${PHONE_NUMBERS[@]}"; do
-            echo "Sending message to $NUMBER..."
-            curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
-            --data-urlencode "To=whatsapp:$NUMBER" \
-            --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
-            --data-urlencode "Body=$MESSAGE" \
-            -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+          echo "Numbers: $NUMBERS"
+          # Process numbers separated by comma and send the message to each
+          echo "$NUMBERS" | tr ',' '\n' | while read -r NUMBER; do
+            if [ -n "$NUMBER" ]; then
+              echo "Sending message to $NUMBER..."
+              curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Messages.json" \
+              --data-urlencode "To=whatsapp:$NUMBER" \
+              --data-urlencode "From=whatsapp:$TWILIO_WHATSAPP_NUMBER" \
+              --data-urlencode "Body=$MESSAGE" \
+              -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN"
+              sleep 4
+            fi
           done
         env:
           TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
           TWILIO_WHATSAPP_NUMBER: ${{ secrets.TWILIO_WHATSAPP_NUMBER }}
           SANDBOX_NUMBERS: ${{ secrets.SANDBOX_NUMBERS }}
+          MESSAGE: ${{ env.MESSAGE }}

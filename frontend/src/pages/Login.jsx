@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import UserInput from "../components/user-input";
+import { Link } from "react-router";
 
 function Login() {
   const { login } = useContext(AuthContext);
@@ -69,7 +70,7 @@ function Login() {
 
             <button
               type="submit"
-              className={`bg-blue-500 text-white py-2 px-4 rounded w-full mt-4 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`bg-blue-500 text-white py-2 px-4 rounded w-full mt-4 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={loading}
             >
               {loading ? "Cargando..." : "Iniciar sesión"}
@@ -88,11 +89,11 @@ function Login() {
       </div>
 
       {/* Botón Volver al Home */}
-      <a href="/">
+      <Link to="/">
         <button className="mt-6 bg-green-500 text-white px-6 py-2 rounded">
           Volver al Home
         </button>
-      </a>
+      </Link>
     </div>
   );
 }

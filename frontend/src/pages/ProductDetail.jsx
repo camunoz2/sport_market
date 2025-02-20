@@ -1,7 +1,7 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
-import { useParams } from "react-router";
+import { useParams, Link } from "react-router";
 import useProduct from "../hooks/useProduct";
 import LoadingSpinner from "../components/LoadingSpinner";
 
@@ -51,11 +51,11 @@ export default function ProductDetail() {
           </button>
         </div>
       </div>
-      <a href="/">
+      <Link to="/">
         <button className="mt-6 bg-green-500 text-white px-6 py-2 rounded">
           Volver al Home
         </button>
-      </a>
+      </Link>
     </div>
   );
 }
