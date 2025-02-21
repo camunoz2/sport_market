@@ -1,11 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-//<<<<<<< 157-feat-productos-home-mostrar-usuario
-import { useNavigate } from "react-router";
 import useProductsByUserId from "../hooks/useProductsByUserId";
 
 import { useNavigate, Link } from "react-router";
-//>>>>>>> main
 
 export const Profile = () => {
   const { user, logout } = useContext(AuthContext);

@@ -8,7 +8,6 @@ import useUserByProductId from "../hooks/useUserByProductId.js";
 const ProductCard = ({ product, addToCart }) => {
   const { user } = useContext(AuthContext);
   const { user: publisher, isLoading } = useUserByProductId(product.id);
-  console.log(publisher);
   const navigate = useNavigate();
 
   const handleAddToCart = () => {
