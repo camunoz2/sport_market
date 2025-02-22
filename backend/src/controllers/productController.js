@@ -54,6 +54,45 @@ export const postProduct = async (req, res) => {
   }
 };
 
+export const deleteProductById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query("DELETE FROM products WHERE id = $1", [id]);
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ message: `Product with id ${id} not found` });
+    }
+
+    return res.status(204).send();
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+export const editProductsById = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, price, imageUrl } = req.body;
+  try {
+    const result = await pool.query(
+      "UPDATE products SET title = $1, description = $2, price = $3, image = $4 WHERE id = $5 RETURNING *",
+      [title, description, price, imageUrl, id],
+    );
+
+    if (result.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ message: `Product with id ${id} not found` });
+    }
+
+    return res.status(200).json(result.rows[0]);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export const getProductsByCategoryId = async (req, res) => {
   const categoryId = req.params.id;
 

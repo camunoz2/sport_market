@@ -3,10 +3,13 @@ import { AuthContext } from "../context/AuthContext";
 import useProductsByUserId from "../hooks/useProductsByUserId";
 
 import { useNavigate, Link } from "react-router";
+import useDeleteProductById from "../hooks/useDeleteProduct";
 
 export const Profile = () => {
   const { user, logout } = useContext(AuthContext);
   const { products, isLoading } = useProductsByUserId(user.id);
+  const { mutate: deleteProduct, isLoading: isDeleting } =
+    useDeleteProductById();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
@@ -47,6 +50,18 @@ export const Profile = () => {
     } else {
       alert("Primero debes logearte o registrarte para publicar productos");
     }
+  };
+
+  const handleEdit = (productId) => {
+    if (!productId) {
+      alert("Error, no hay un id para editar producto");
+      return;
+    }
+    navigate(`/edit-product/${productId}`);
+  };
+
+  const handleDelete = (id) => {
+    deleteProduct(id);
   };
 
   return (
@@ -119,13 +134,33 @@ export const Profile = () => {
         ) : (
           <ul className="space-y-4">
             {products?.map((product) => (
-              <li key={product.id} className="p-4 border rounded shadow-sm">
-                <p>
-                  <strong>Producto:</strong> {product.title}
-                </p>
-                <p>
-                  <strong>Precio:</strong> {product.price}
-                </p>
+              <li
+                key={product.id}
+                className="p-4 border rounded shadow-sm flex gap-2"
+              >
+                <div>
+                  <p>
+                    <strong>Producto:</strong> {product.title}
+                  </p>
+                  <p>
+                    <strong>Precio:</strong> {product.price}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEdit(product.id)}
+                    className="bg-blue-500 hover:bg-red-400 px-2 py-2 rounded-xs text-white"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    disabled={isDeleting}
+                    onClick={() => handleDelete(product.id)}
+                    className="bg-red-500 hover:bg-red-400 px-2 py-2 rounded-xs text-white"
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

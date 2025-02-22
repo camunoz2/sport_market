@@ -16,6 +16,15 @@ export async function getCategories() {
   return await response.json();
 }
 
+export async function deleteProductById(id) {
+  const response = await fetch(`${BASE_URL}/api/products/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw new Error("No se pudo eliminar producto");
+  }
+}
+
 export async function getProductsByUserId(id) {
   if (!id) {
     throw new Error("Se debe proporcionar un id para la categoria");
