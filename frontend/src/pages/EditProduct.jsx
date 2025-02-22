@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
+import { Link } from "react-router";
 
 const EditProduct = () => {
   const { id } = useParams();
@@ -104,25 +105,20 @@ const EditProduct = () => {
           className="border p-2 w-full"
         />
       </div>
-      <div>
-        <label htmlFor="imageUrl" className="block font-medium">
-          URL de Imagen:
-        </label>
-        <input
-          type="text"
-          id="imageUrl"
-          name="imageUrl"
-          value={product.imageUrl}
-          onChange={handleChange}
-          className="border p-2 w-full"
-        />
+      <div className="flex gap-2">
+        <Link
+          to="/profile"
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-200 transition-colors"
+        >
+          Vover
+        </Link>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+        >
+          Guardar Cambios
+        </button>
       </div>
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-      >
-        Guardar Cambios
-      </button>
     </form>
   );
 };
