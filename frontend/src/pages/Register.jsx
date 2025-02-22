@@ -39,10 +39,10 @@ const Register = () => {
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/register`,
-        formData
+        formData,
       );
       setSuccess("Usuario registrado con éxito");
-      setTimeout(() => navigate("/login"), 2000); // Redirigir a la página de login después del registro exitoso
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
       setError("Error al registrar el usuario", err);
     }
@@ -177,7 +177,7 @@ const Register = () => {
                 Registrarse
               </button>
               <button
-                onClick={() => navigate("/")} // Redirigir al home si se cancela el registro
+                onClick={() => navigate("/")}
                 className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg w-full md:w-[48%] hover:bg-gray-400 transition-colors"
               >
                 Cancelar
@@ -185,14 +185,15 @@ const Register = () => {
             </div>
           </form>
           <div className="flex justify-center mt-8">
-
-            <p className="text-gray-600">¿Ya tienes cuenta? <button
-                  className="text-gray-600 font-semibold hover:underline"
-                  onClick={() => navigate("/login")}
-                >
-                  Iniciar Sesión
-                </button></p>
-            
+            <p className="text-gray-600">
+              ¿Ya tienes cuenta?{" "}
+              <button
+                className="text-gray-600 font-semibold hover:underline"
+                onClick={() => navigate("/login")}
+              >
+                Iniciar Sesión
+              </button>
+            </p>
           </div>
         </div>
       </div>

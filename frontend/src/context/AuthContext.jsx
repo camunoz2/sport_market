@@ -34,12 +34,10 @@ export const AuthProvider = ({ children }) => {
           body: JSON.stringify({ email, password }),
         },
       );
-      console.log(response);
 
       if (response.ok) {
         const data = await response.json();
         const { token, email: userEmail, name, id } = data;
-        console.log("datar: ", data);
 
         sessionStorage.setItem("jwt", token);
         sessionStorage.setItem("email", userEmail);
@@ -67,6 +65,8 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.clear();
     setUser(null);
     delete axios.defaults.headers.common["Authorization"];
+
+    window.location.href = "/login";
   };
 
   useEffect(() => {

@@ -26,7 +26,6 @@ export const processPayment = async (req, res) => {
       cancel_url: `${process.env.FRONTEND_URL}/cart?cancel=true`,
     });
 
-    // Guardar la compra en la base de datos
     for (const product of products) {
       await db.query(
         `INSERT INTO orders (user_id, product_id, quantity) VALUES ($1, $2, $3)`,

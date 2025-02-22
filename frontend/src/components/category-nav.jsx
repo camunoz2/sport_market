@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react"; // Importamos iconos para el menú
+import { Menu, X } from "lucide-react";
 import useCategories from "../hooks/useCategories";
 
 const CategoryNav = () => {

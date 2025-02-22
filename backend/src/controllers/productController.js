@@ -28,8 +28,9 @@ export const getOrders = async (req, res) => {
 export const postProduct = async (req, res) => {
   const { title, description, price, category } = req.body;
   const imageUrl = req.file.location;
+  const user_id = req.user?.id;
 
-  if (!title || !description || !price || !category || !imageUrl) {
+  if (!title || !description || !price || !category || !imageUrl || !user_id) {
     return res.status(400).json({ message: "Faltan datos" });
   }
 
@@ -37,8 +38,8 @@ export const postProduct = async (req, res) => {
 
   try {
     await pool.query(
-      "INSERT INTO products (id, title, description, price, category_id, image) VALUES ($1, $2, $3, $4, $5, $6)",
-      [id, title, description, price, category, imageUrl],
+      "INSERT INTO products (id, title, description, price, category_id, image, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+      [id, title, description, price, category, imageUrl, user_id],
     );
     return res.status(201).json({
       message: "Producto publicado correctamente",
@@ -48,6 +49,7 @@ export const postProduct = async (req, res) => {
       price,
       category,
       image: imageUrl,
+      user_id,
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });

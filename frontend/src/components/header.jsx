@@ -41,7 +41,7 @@ const Header = () => {
                 <motion.a
                   href="/profile"
                   className="font-bold hover:underline"
-                  whileHover={{ scale: 1.1, color: "#fbbf24" }} // Cambia a amarillo al pasar el cursor
+                  whileHover={{ scale: 1.1, color: "#fbbf24" }}
                 >
                   Ingresar al perfil
                 </motion.a>
@@ -62,7 +62,7 @@ const Header = () => {
                 <motion.button
                   className="text-white font-bold hover:underline"
                   onClick={handleLogout}
-                  whileHover={{ scale: 1.1, color: "#f87171" }} // Rojo claro al pasar el cursor
+                  whileHover={{ scale: 1.1, color: "#f87171" }}
                 >
                   Cerrar Sesión
                 </motion.button>
@@ -71,8 +71,12 @@ const Header = () => {
                   className="relative cursor-pointer hidden md:block"
                   onClick={() => navigate("/cart")}
                   whileHover={{ scale: 1.2 }}
-                  animate={{ y: [0, -2, 0] }} // Pequeño rebote
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                  animate={{ y: [0, -2, 0] }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 2,
+                    ease: "easeInOut",
+                  }}
                 >
                   <img src="/carticon.svg" alt="Carrito" className="h-8" />
                   <span className="absolute bottom-0 right-0 inline-flex items-center justify-center w-4 h-4 text-xs font-bold text-red-100 bg-red-600 rounded-full">

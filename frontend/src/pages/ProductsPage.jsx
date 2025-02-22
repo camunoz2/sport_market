@@ -14,7 +14,6 @@ function ProductsPage() {
     useProductsFromCategories(id);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Pagination Settings
   const productsPerPage = 10;
   const totalPages = products
     ? Math.ceil(products.length / productsPerPage)

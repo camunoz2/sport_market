@@ -15,7 +15,7 @@ const CategoryList = () => {
         transition={{
           repeat: Infinity,
           ease: "linear",
-          duration: 12, // Ajusta la velocidad
+          duration: 12,
         }}
       >
         {data?.categories.concat(data?.categories).map((category, index) => (

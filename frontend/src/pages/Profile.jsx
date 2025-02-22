@@ -103,10 +103,7 @@ export const Profile = () => {
         ) : (
           <ul className="space-y-4">
             {orders.map((order) => (
-              <li
-                key={order.id} // Ensure your orders endpoint returns a unique id per order.
-                className="p-4 border rounded shadow-sm"
-              >
+              <li key={order.id} className="p-4 border rounded shadow-sm">
                 <p>
                   <strong>Producto:</strong> {order.title}
                 </p>

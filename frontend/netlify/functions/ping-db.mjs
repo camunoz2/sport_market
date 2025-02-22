@@ -8,7 +8,6 @@ export default async function (event, context) {
     }
 
     const result = await response.text();
-    console.log("Successfully pinged API:", result);
 
     return new Response(JSON.stringify({ message: "API is awake", result }), {
       status: 200,
