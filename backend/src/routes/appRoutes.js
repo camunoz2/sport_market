@@ -15,12 +15,13 @@ import {
 } from "../controllers/productController.js";
 import upload from "../config/uploadConfig.js";
 import { processPayment } from "../controllers/paymenController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 router.post("/login", login);
 router.post("/register", register);
-router.post("/post", upload.single("image"), postProduct);
+router.post("/post", authMiddleware, upload.single("image"), postProduct);
 router.get("/categories", getCategories);
 router.get("/categories/:id", getProductsByCategoryId);
 router.get("/products", getProducts);

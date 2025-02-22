@@ -13,11 +13,11 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(""); // Reset error message
+    setError("");
     try {
       const response = await login(email, password);
       if (response.success) {
-        window.location.href = "/"; // Redirige al Home utilizando window.location.href
+        window.location.href = "/";
       } else {
         setError("Credenciales incorrectas. Por favor, inténtalo de nuevo.");
       }
