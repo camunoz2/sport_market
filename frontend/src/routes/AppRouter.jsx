@@ -6,6 +6,7 @@ import Register from "../pages/Register.jsx";
 import BaseLayout from "../layouts/base-layout.jsx";
 import CreatePost from "../pages/CreatePost.jsx";
 import ProductsPage from "../pages/ProductsPage";
+import EditProduct from "../pages/EditProduct";
 import { NotFound } from "../components/NoFound.jsx";
 import { Profile } from "../pages/Profile.jsx";
 import CartPage from "../pages/CartPage.jsx";
@@ -24,6 +25,7 @@ const AppRouter = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/*" element={<NotFound />} />
+          <Route path="/edit-product/:id" element={<EditProduct />} />
         </Route>
       </Routes>
     </BrowserRouter>
